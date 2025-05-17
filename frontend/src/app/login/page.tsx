@@ -8,6 +8,7 @@ import { FaUser, FaLock } from "react-icons/fa";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { RiStethoscopeLine, RiHospitalLine, RiPulseLine } from "react-icons/ri";
 import { IconType } from 'react-icons';
+import { useLoading } from "@/context/LoadingContext";
 
 interface BackgroundIconProps {
   icon: IconType;
@@ -41,15 +42,24 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const { setIsLoading } = useLoading();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Add actual authentication logic here
-    console.log("Login attempt with:", { email, password });
     
-    // For demo purposes, always navigate to dashboard
-    // In production, this should only happen after successful authentication
-    router.push("/dashboard");
+    // Show loading state
+    setIsLoading(true);
+    
+    try {
+      // TODO: Add actual authentication logic here
+      console.log("Login attempt with:", { email, password });
+      
+      // For demo purposes, always navigate to dashboard
+      // In production, this should only happen after successful authentication
+      await router.push("/dashboard");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Create a grid of background icons

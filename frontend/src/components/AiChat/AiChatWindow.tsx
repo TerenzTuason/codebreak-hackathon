@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Send, X, Maximize2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useLoading } from '@/context/LoadingContext';
 
 interface AiChatWindowProps {
   onClose: () => void;
@@ -19,6 +20,7 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
     { text: "Hi 👋 How can I help you?", isUser: false }
   ]);
   const [inputValue, setInputValue] = useState('');
+  const { setIsLoading } = useLoading();
 
   const quickActions: QuickAction[] = [
     { text: "Track my order 📦" },
@@ -31,12 +33,16 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
     setMessages(prev => [...prev, { text: inputValue, isUser: true }]);
     setInputValue('');
     
+    // Show loading state while waiting for response
+    setIsLoading(true);
+    
     // Simulate AI response
     setTimeout(() => {
       setMessages(prev => [...prev, { 
         text: "Let's take care of your order 📦\nPlease choose the right topic:", 
         isUser: false 
       }]);
+      setIsLoading(false);
     }, 1000);
   };
 
