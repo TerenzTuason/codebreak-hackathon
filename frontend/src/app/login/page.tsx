@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { FaUser, FaLock } from "react-icons/fa";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { RiStethoscopeLine, RiHospitalLine, RiPulseLine } from "react-icons/ri";
@@ -39,11 +40,16 @@ const BackgroundIcon = ({ icon: Icon, x, y }: BackgroundIconProps) => (
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
+    // TODO: Add actual authentication logic here
     console.log("Login attempt with:", { email, password });
+    
+    // For demo purposes, always navigate to dashboard
+    // In production, this should only happen after successful authentication
+    router.push("/dashboard");
   };
 
   // Create a grid of background icons
