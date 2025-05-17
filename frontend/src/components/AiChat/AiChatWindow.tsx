@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLoading } from '@/context/LoadingContext';
+import { usePathname } from 'next/navigation';
 
 interface AiChatWindowProps {
   onClose: () => void;
@@ -29,9 +30,27 @@ interface Message {
 }
 
 export default function AiChatWindow({ onClose }: AiChatWindowProps) {
-  const [messages, setMessages] = useState<Message[]>([
-    { 
-      text: "Hi 👋 How can I help you?", 
+  const pathname = usePathname();
+  
+  const getInitialMessage = (): Message => {
+    if (pathname === '/health-records') {
+      return {
+        text: "Hi! I can help you understand your health records or answer any questions about your medical history. What would you like to know?",
+        isUser: false,
+        metadata: {
+          suggestions: [
+            "Explain my current medications",
+            "What do my blood test results mean?",
+            "Summarize my medical history",
+            "Any concerning patterns in my family history?"
+          ]
+        }
+      };
+    }
+    
+    // Default message for other pages
+    return {
+      text: "Hi 👋 How can I help you?",
       isUser: false,
       metadata: {
         suggestions: [
@@ -40,8 +59,10 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
           "Medical advice needed"
         ]
       }
-    }
-  ]);
+    };
+  };
+
+  const [messages, setMessages] = useState<Message[]>([getInitialMessage()]);
   const [inputValue, setInputValue] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [showImageUpload, setShowImageUpload] = useState(false);
@@ -65,19 +86,37 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
     
     setIsLoading(true);
     
-    // Simulate AI response with smart suggestions
+    // Customize response based on context
     setTimeout(() => {
-      const newMessage: Message = {
-        text: "I understand you're not feeling well. Let me help you better understand your symptoms.",
-        isUser: false,
-        metadata: {
-          suggestions: [
-            "Tell me more about when it started",
-            "Rate your pain from 1-10",
-            "Any other symptoms?"
-          ]
-        }
-      };
+      let newMessage: Message;
+      
+      if (pathname === '/health-records') {
+        newMessage = {
+          text: "I'll help you understand your health information better. What specific details would you like me to explain?",
+          isUser: false,
+          metadata: {
+            suggestions: [
+              "Compare with previous records",
+              "Explain medical terms",
+              "Show related health tips",
+              "Check for interactions between medications"
+            ]
+          }
+        };
+      } else {
+        newMessage = {
+          text: "I understand you're not feeling well. Let me help you better understand your symptoms.",
+          isUser: false,
+          metadata: {
+            suggestions: [
+              "Tell me more about when it started",
+              "Rate your pain from 1-10",
+              "Any other symptoms?"
+            ]
+          }
+        };
+      }
+      
       setMessages(prev => [...prev, newMessage]);
       setIsLoading(false);
     }, 1000);
@@ -131,27 +170,27 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
   };
 
   return (
-    <div className="fixed bottom-0 right-0 sm:relative w-full sm:w-[400px] md:w-[500px] h-[100dvh] sm:h-[600px] bg-white sm:rounded-[24px] shadow-2xl flex flex-col overflow-hidden">
+    <div className="fixed bottom-0 right-0 sm:relative w-full sm:w-[320px] md:w-[360px] h-[100dvh] sm:h-[500px] bg-white sm:rounded-[20px] shadow-2xl flex flex-col overflow-hidden">
       {/* Header */}
       <motion.div 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="bg-gradient-to-r from-blue-600 to-blue-500 p-3 sm:p-4 text-white"
+        className="bg-gradient-to-r from-blue-600 to-blue-500 p-2.5 sm:p-3 text-white"
       >
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2">
             <div className="relative">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden bg-white ring-2 ring-white/20">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden bg-white ring-2 ring-white/20">
                 <Image
                   src="/images/chatavatar.png"
                   alt="Assistant"
-                  width={48}
-                  height={48}
+                  width={40}
+                  height={40}
                   className="object-contain"
                 />
               </div>
               <motion.div 
-                className="absolute bottom-0 right-0 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-400 rounded-full ring-2 ring-white"
+                className="absolute bottom-0 right-0 w-2 h-2 sm:w-2.5 sm:h-2.5 bg-green-400 rounded-full ring-2 ring-white"
                 animate={{
                   scale: [1, 1.2, 1],
                   opacity: [1, 0.7, 1],
@@ -164,29 +203,29 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
               />
             </div>
             <div>
-              <h3 className="font-semibold text-base sm:text-lg">SympAI</h3>
-              <p className="text-xs sm:text-sm text-white/80">Online • Ready to help</p>
+              <h3 className="font-semibold text-sm sm:text-base">SympAI</h3>
+              <p className="text-[10px] sm:text-xs text-white/80">Online • Ready to help</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <Link
               href="/chat"
-              className="hidden sm:flex hover:bg-white/10 rounded-full p-1.5 sm:p-2 transition-all items-center justify-center"
+              className="hidden sm:flex hover:bg-white/10 rounded-full p-1.5 transition-all items-center justify-center"
             >
-              <Maximize2 className="h-5 w-5" />
+              <Maximize2 className="h-4 w-4" />
             </Link>
             <button 
               onClick={onClose} 
-              className="hover:bg-white/10 rounded-full p-1.5 sm:p-2 transition-all"
+              className="hover:bg-white/10 rounded-full p-1.5 transition-all"
             >
-              <X className="h-5 w-5" />
+              <X className="h-4 w-4" />
             </button>
           </div>
         </div>
       </motion.div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-3 space-y-3">
         <AnimatePresence>
           {messages.map((message, index) => (
             <motion.div
@@ -198,7 +237,7 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
             >
               <motion.div
                 whileHover={{ scale: 1.02 }}
-                className={`max-w-[85%] sm:max-w-[80%] rounded-[16px] sm:rounded-[20px] p-3 sm:p-3.5 shadow-sm ${
+                className={`max-w-[85%] rounded-[14px] sm:rounded-[16px] p-2.5 sm:p-3 shadow-sm ${
                   message.isUser
                     ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
                     : 'bg-gray-100 text-gray-800'
@@ -209,8 +248,8 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
                     <Image
                       src={message.metadata.imageUrl}
                       alt="Uploaded"
-                      width={200}
-                      height={200}
+                      width={160}
+                      height={160}
                       className="rounded-lg"
                     />
                   </div>
@@ -220,9 +259,9 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
                     <audio controls src={message.metadata.audioUrl} className="w-full" />
                   </div>
                 )}
-                <p className="text-sm sm:text-base whitespace-pre-wrap">{message.text}</p>
+                <p className="text-xs sm:text-sm whitespace-pre-wrap">{message.text}</p>
                 {message.metadata?.suggestions && (
-                  <div className="mt-3 space-y-2">
+                  <div className="mt-2 space-y-1.5">
                     {message.metadata.suggestions.map((suggestion, idx) => (
                       <button
                         key={idx}
@@ -230,7 +269,7 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
                           setInputValue(suggestion);
                           setMessages(prev => [...prev, { text: suggestion, isUser: true }]);
                         }}
-                        className={`w-full text-left px-3 py-2 rounded-lg text-sm ${
+                        className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs sm:text-sm ${
                           message.isUser
                             ? 'bg-white/10 hover:bg-white/20'
                             : 'bg-white hover:bg-gray-50'
@@ -252,22 +291,22 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="p-4 border-t border-gray-100"
+        className="p-3 border-t border-gray-100"
       >
-        <div className="flex items-center gap-2 bg-white rounded-xl sm:rounded-2xl p-1.5 shadow-sm ring-1 ring-gray-100">
+        <div className="flex items-center gap-1.5 bg-white rounded-xl p-1 shadow-sm ring-1 ring-gray-100">
           <button
             onClick={handleVoiceInput}
-            className={`p-2 rounded-lg transition-all ${
+            className={`p-1.5 rounded-lg transition-all ${
               isRecording ? 'bg-red-500 text-white' : 'text-gray-500 hover:bg-gray-100'
             }`}
           >
-            <Mic className="h-5 w-5" />
+            <Mic className="h-4 w-4" />
           </button>
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition-all"
+            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition-all"
           >
-            <Camera className="h-5 w-5" />
+            <Camera className="h-4 w-4" />
           </button>
           <input
             type="file"
@@ -282,18 +321,18 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyPress}
             placeholder="Type your message..."
-            className="flex-1 bg-transparent px-2 sm:px-3 focus:outline-none text-sm"
+            className="flex-1 bg-transparent px-2 focus:outline-none text-xs sm:text-sm"
           />
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={handleSend}
             disabled={!inputValue.trim()}
-            className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            className="p-1.5 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
           >
-            <Send className="h-4 w-4 sm:h-5 sm:w-5" />
+            <Send className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </motion.button>
         </div>
-        <div className="text-[10px] text-gray-400 text-right mt-2">
+        <div className="text-[8px] sm:text-[10px] text-gray-400 text-right mt-1.5">
           Powered by SympAI
         </div>
       </motion.div>
