@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
-import { FaBell } from 'react-icons/fa';
+import { User, LogOut, Menu, X } from 'lucide-react';
 
 interface NavItem {
   label: string;
@@ -16,39 +15,35 @@ interface NavbarProps {
 }
 
 const navItems: NavItem[] = [
-  { label: 'Overview', href: '/dashboard' },
-  { label: 'Patients', href: '/dashboard/patients' },
-  { label: 'Tasks', href: '/dashboard/tasks' },
+  { label: 'Home', href: '/dashboard' },
+  { label: 'Health Records', href: '/dashboard/health-records' },
+  { label: 'Queries', href: '/dashboard/queries' },
 ];
 
 export default function Navbar({ activeTab, onTabChange }: NavbarProps) {
-  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
+    <nav className="bg-blue-600 shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href="/dashboard" className="flex items-center space-x-2 flex-shrink-0">
-              <Image
-                src="/images/icon.png"
-                alt="SympAI Icon"
-                width={40}
-                height={40}
-                className="object-contain"
-                priority
-              />
-              <span className="text-xl font-bold text-gray-900">SympAI</span>
+              <span className="text-xl font-bold text-white">SympAI</span>
             </Link>
-            <div className="hidden md:flex space-x-8 ml-8">
+          </div>
+
+          <div className="hidden md:flex-1 md:flex md:items-center md:justify-center">
+            <div className="flex space-x-8">
               {navItems.map((item) => (
                 <button
                   key={item.label}
                   onClick={() => onTabChange(item.label.toLowerCase())}
                   className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${
                     activeTab === item.label.toLowerCase()
-                      ? 'text-blue-600 border-b-2 border-blue-600'
-                      : 'text-gray-500 hover:text-gray-700 hover:border-b-2 hover:border-gray-300'
+                      ? 'text-white border-b-2 border-white'
+                      : 'text-blue-100 hover:text-white hover:border-b-2 hover:border-blue-100'
                   }`}
                 >
                   {item.label}
@@ -60,55 +55,64 @@ export default function Navbar({ activeTab, onTabChange }: NavbarProps) {
           <div className="flex items-center space-x-4">
             <div className="relative">
               <button 
-                className="text-gray-400 hover:text-gray-500 transition-colors duration-200"
-                onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                className="flex items-center space-x-3 text-white hover:text-blue-100 transition-colors duration-200"
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
               >
-                <FaBell className="h-6 w-6" />
-                <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs">3</span>
+                <User className="h-6 w-6" />
+                <span className="hidden md:block text-sm">
+                  Dr. Smith
                 </span>
               </button>
               
-              {isNotificationsOpen && (
-                <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 border border-gray-100">
-                  <div className="px-4 py-2 border-b border-gray-100">
-                    <h3 className="text-sm font-semibold text-gray-800">Notifications</h3>
+              {isProfileOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 border border-gray-100">
+                  <div className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer flex items-center">
+                    <User className="h-4 w-4 mr-2" />
+                    Profile
                   </div>
-                  <div className="max-h-96 overflow-y-auto">
-                    {/* Notification Items */}
-                    <div className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
-                      <p className="text-sm text-gray-800">New patient appointment request</p>
-                      <p className="text-xs text-gray-500 mt-1">5 minutes ago</p>
-                    </div>
-                    <div className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
-                      <p className="text-sm text-gray-800">Lab results available for Patient #12345</p>
-                      <p className="text-xs text-gray-500 mt-1">1 hour ago</p>
-                    </div>
-                    <div className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
-                      <p className="text-sm text-gray-800">Medication reminder sent successfully</p>
-                      <p className="text-xs text-gray-500 mt-1">2 hours ago</p>
-                    </div>
+                  <div className="px-4 py-2 text-sm text-red-600 hover:bg-gray-100 cursor-pointer flex items-center">
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
                   </div>
                 </div>
               )}
             </div>
-            
-            <div className="flex items-center">
-              <button className="flex items-center space-x-3 group">
-                <Image
-                  src="/images/avatar-placeholder.png"
-                  alt="User avatar"
-                  width={32}
-                  height={32}
-                  className="rounded-full ring-2 ring-gray-200 group-hover:ring-blue-400 transition-all duration-200"
-                />
-                <span className="hidden md:block text-sm text-gray-700 group-hover:text-blue-600 transition-colors duration-200">
-                  Dr. Smith
-                </span>
-              </button>
-            </div>
+
+            <button
+              className="md:hidden text-white hover:text-blue-100 transition-colors duration-200"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </button>
           </div>
         </div>
+
+        {isMobileMenuOpen && (
+          <div className="md:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1">
+              {navItems.map((item) => (
+                <button
+                  key={item.label}
+                  onClick={() => {
+                    onTabChange(item.label.toLowerCase());
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
+                    activeTab === item.label.toLowerCase()
+                      ? 'text-white bg-blue-700'
+                      : 'text-blue-100 hover:text-white hover:bg-blue-700'
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   );
