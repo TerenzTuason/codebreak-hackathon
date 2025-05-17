@@ -1,0 +1,38 @@
+{"time":"2025-05-18T01:27:40.9884988+08:00","level":"INFO","msg":"stream: starting","core version":"0.19.11","symlink path":"C:\\Users\\terenz\\Projects\\Others\\CodeBreak\\ai-training\\wandb\\offline-run-20250518_012740-ht1uxywa\\logs\\debug-core.log"}
+{"time":"2025-05-18T01:27:41.1117662+08:00","level":"WARN","msg":"GraphQL client is nil, skipping feature loading"}
+{"time":"2025-05-18T01:27:41.1133684+08:00","level":"INFO","msg":"created new stream","id":"ht1uxywa"}
+{"time":"2025-05-18T01:27:41.1133684+08:00","level":"INFO","msg":"stream: started","id":"ht1uxywa"}
+{"time":"2025-05-18T01:27:41.1133684+08:00","level":"INFO","msg":"handler: started","stream_id":"ht1uxywa"}
+{"time":"2025-05-18T01:27:41.1133684+08:00","level":"INFO","msg":"sender: started","stream_id":"ht1uxywa"}
+{"time":"2025-05-18T01:27:41.1138906+08:00","level":"INFO","msg":"writer: Do: started","stream_id":"ht1uxywa"}
+{"time":"2025-05-18T01:27:41.1240236+08:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-05-18T01:27:56.1615113+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:28:11.1708853+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:28:26.3474787+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:28:41.1999302+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:28:56.1776264+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:29:11.1807477+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:29:26.1688124+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:29:41.5237806+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:29:58.4294977+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:30:15.0533422+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:30:26.1752738+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:30:41.1859451+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:30:56.1775254+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:31:11.1908813+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:31:26.1836343+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:31:41.3648122+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:31:56.2519442+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:32:11.177905+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:32:26.1899708+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:32:41.1791683+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:32:56.2071168+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:33:11.2354766+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:33:24.9219005+08:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-05-18T01:33:24.9229262+08:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-05-18T01:33:24.9357172+08:00","level":"INFO","msg":"handler: operation stats","stats":{}}
+{"time":"2025-05-18T01:33:24.9627127+08:00","level":"INFO","msg":"stream: closing","id":"ht1uxywa"}
+{"time":"2025-05-18T01:33:24.9627127+08:00","level":"INFO","msg":"handler: closed","stream_id":"ht1uxywa"}
+{"time":"2025-05-18T01:33:24.9632427+08:00","level":"INFO","msg":"sender: closed","stream_id":"ht1uxywa"}
+{"time":"2025-05-18T01:33:24.9627127+08:00","level":"INFO","msg":"writer: Close: closed","stream_id":"ht1uxywa"}
+{"time":"2025-05-18T01:33:24.9642869+08:00","level":"INFO","msg":"stream: closed","id":"ht1uxywa"}

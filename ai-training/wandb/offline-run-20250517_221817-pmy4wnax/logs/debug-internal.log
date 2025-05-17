@@ -1,0 +1,17 @@
+{"time":"2025-05-17T22:18:17.8264296+08:00","level":"INFO","msg":"stream: starting","core version":"0.19.11","symlink path":"C:\\Users\\terenz\\Projects\\Others\\CodeBreak\\ai-training\\wandb\\offline-run-20250517_221817-pmy4wnax\\logs\\debug-core.log"}
+{"time":"2025-05-17T22:18:17.9504847+08:00","level":"WARN","msg":"GraphQL client is nil, skipping feature loading"}
+{"time":"2025-05-17T22:18:17.9504847+08:00","level":"INFO","msg":"created new stream","id":"pmy4wnax"}
+{"time":"2025-05-17T22:18:17.9510378+08:00","level":"INFO","msg":"stream: started","id":"pmy4wnax"}
+{"time":"2025-05-17T22:18:17.9510378+08:00","level":"INFO","msg":"handler: started","stream_id":"pmy4wnax"}
+{"time":"2025-05-17T22:18:17.9510378+08:00","level":"INFO","msg":"writer: Do: started","stream_id":"pmy4wnax"}
+{"time":"2025-05-17T22:18:17.9510378+08:00","level":"INFO","msg":"sender: started","stream_id":"pmy4wnax"}
+{"time":"2025-05-17T22:18:17.9556453+08:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-05-17T22:18:32.9710513+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-17T22:18:47.9702044+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-17T22:18:59.3532173+08:00","level":"INFO","msg":"stream: closing","id":"pmy4wnax"}
+{"time":"2025-05-17T22:18:59.3532173+08:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-05-17T22:18:59.3532173+08:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-05-17T22:18:59.3532173+08:00","level":"INFO","msg":"handler: closed","stream_id":"pmy4wnax"}
+{"time":"2025-05-17T22:18:59.3532173+08:00","level":"INFO","msg":"writer: Close: closed","stream_id":"pmy4wnax"}
+{"time":"2025-05-17T22:18:59.3553428+08:00","level":"INFO","msg":"sender: closed","stream_id":"pmy4wnax"}
+{"time":"2025-05-17T22:18:59.3553428+08:00","level":"INFO","msg":"stream: closed","id":"pmy4wnax"}

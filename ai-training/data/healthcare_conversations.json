@@ -1,0 +1,81 @@
+{
+    "hospital_name": "CityCare Hospital",
+    "data_sources": {
+        "departments": [
+            { "name": "Cardiology", "services": ["Heart Checkups", "ECG", "Stress Test"] },
+            { "name": "Orthopedics", "services": ["Fracture Treatment", "Joint Replacement", "Physiotherapy"] },
+            { "name": "Pediatrics", "services": ["Child Vaccination", "Growth Monitoring", "Flu Treatment"] },
+            { "name": "Radiology", "services": ["X-Ray", "MRI", "Ultrasound"] },
+            { "name": "Neurology", "services": ["EEG", "Migraine Treatment", "Neurological Consultations"] }
+        ],
+        "doctors": [
+            { "name": "Dr. John Miller", "department": "Cardiology", "availability": ["Monday", "Wednesday", "Friday"], "time": "9 AM - 4 PM", "room": "201A" },
+            { "name": "Dr. Emily Taylor", "department": "Pediatrics", "availability": ["Tuesday", "Thursday"], "time": "10 AM - 5 PM", "room": "105C" },
+            { "name": "Dr. Sarah Lee", "department": "Orthopedics", "availability": ["Monday", "Wednesday"], "time": "8 AM - 3 PM", "room": "302B" },
+            { "name": "Dr. Mark Spencer", "department": "Neurology", "availability": ["Tuesday", "Friday"], "time": "1 PM - 6 PM", "room": "401D" }
+        ],
+        "insurance_partners": [
+            { "name": "HealthFirst", "services_covered": ["General Checkup", "Vaccination", "Lab Tests"], "contact": "1-800-555-1001" },
+            { "name": "Medicare", "services_covered": ["Surgery", "Hospital Stays", "Specialist Consultations"], "contact": "1-800-555-2002" },
+            { "name": "BlueCross", "services_covered": ["Emergency Care", "Maternity Services"], "contact": "1-800-555-3003" },
+            { "name": "CarePlus", "services_covered": ["Dental Care", "Outpatient Consultations"], "contact": "1-800-555-4004" }
+        ],
+        "appointments": [
+            { "appointment_id": "A101", "patient_name": "John Doe", "doctor": "Dr. John Miller", "date": "2025-05-20", "status": "Scheduled", "reason": "Routine heart checkup" },
+            { "appointment_id": "A102", "patient_name": "Jane Smith", "doctor": "Dr. Emily Taylor", "date": "2025-05-18", "status": "Missed", "reason": "Child flu symptoms consultation" },
+            { "appointment_id": "A103", "patient_name": "Alex Johnson", "doctor": "Dr. Sarah Lee", "date": "2025-05-22", "status": "Scheduled", "reason": "Post-surgery physiotherapy session" }
+        ],
+        "lab_results": [
+            { "patient_name": "John Doe", "test_name": "Cholesterol", "result": "LDL 160 mg/dL", "range": "Normal < 130 mg/dL", "date": "2025-05-15", "doctor": "Dr. John Miller" },
+            { "patient_name": "Jane Smith", "test_name": "Glucose", "result": "Fasting Glucose 110 mg/dL", "range": "Normal < 100 mg/dL", "date": "2025-05-14", "doctor": "Dr. Emily Taylor" },
+            { "patient_name": "Alex Johnson", "test_name": "X-Ray", "result": "No fractures detected", "date": "2025-05-16", "doctor": "Dr. Sarah Lee" }
+        ],
+        "policies": {
+            "cancellation_policy": "Appointments can be canceled up to 24 hours before the scheduled time. Contact us at 555-1234 for urgent cancellations.",
+            "billing_policy": "Co-pays apply for insured patients based on their insurance plans. Additional charges apply for non-covered services.",
+            "data_privacy_policy": "Your medical data is securely stored and shared only with your consent. Contact 555-5678 for privacy concerns."
+        }
+    },
+    "queries": [
+        {
+            "intent": "department_services",
+            "examples": ["What services does cardiology offer?", "Do you have radiology facilities?", "What treatments are available in neurology?"],
+            "response_template": "The {department} department offers the following services: {services}. The department is located on the 2nd floor. Would you like to book an appointment?"
+        },
+        {
+            "intent": "doctor_availability",
+            "examples": ["When is Dr. Miller available?", "What days can I see Dr. Spencer?", "Does Dr. Lee work on Wednesdays?"],
+            "response_template": "{doctor} is available on {availability} from {time} in room {room}. Would you like me to book an appointment?"
+        },
+        {
+            "intent": "insurance_coverage",
+            "examples": ["Does HealthFirst cover vaccinations?", "Will Medicare cover my surgery?", "Is CarePlus accepted for outpatient consultations?"],
+            "response_template": "Yes, {insurance_provider} covers {services_covered}. You can contact them at {contact} for further details."
+        },
+        {
+            "intent": "appointment_management",
+            "examples": ["Can I cancel my appointment?", "How do I reschedule my missed appointment?", "What time is my appointment?"],
+            "response_template": "Your appointment with {doctor} is scheduled for {date}. The reason for the appointment is: {reason}. Would you like to cancel or reschedule?"
+        },
+        {
+            "intent": "lab_results",
+            "examples": ["What are my latest test results?", "Can I get my cholesterol test result?", "When were my glucose levels last checked?"],
+            "response_template": "Your {test_name} result is {result} (normal range: {range}), recorded on {date}. This was reviewed by {doctor}. Would you like to discuss this further?"
+        },
+        {
+            "intent": "policy_inquiry",
+            "examples": ["What's your cancellation policy?", "Can you explain your billing policy?", "What are the rules for rescheduling appointments?"],
+            "response_template": "{policy_description}"
+        },
+        {
+            "intent": "medication_refill",
+            "examples": ["How can I refill my prescription?", "Can I get a refill for my cholesterol medication?", "Do I need a doctor's approval for a refill?"],
+            "response_template": "You can refill your prescription for {medication} by contacting our pharmacy at 555-6789. If your prescription has expired, please schedule a consultation with your doctor."
+        },
+        {
+            "intent": "test_preparation",
+            "examples": ["Do I need to fast for my cholesterol test?", "What should I do before my X-ray?", "How do I prepare for my MRI?"],
+            "response_template": "For {test_name}, please follow these steps: {preparation_steps}. If you have questions, call our lab at 555-7890."
+        }
+    ]
+} 

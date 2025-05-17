@@ -1,0 +1,41 @@
+{
+  "os": "Windows-11-10.0.22631-SP0",
+  "python": "CPython 3.13.3",
+  "startedAt": "2025-05-17T14:18:17.770306Z",
+  "program": "C:\\Users\\terenz\\Projects\\Others\\CodeBreak\\ai-training\\run_training.py",
+  "codePath": "ai-training\\run_training.py",
+  "git": {
+    "remote": "https://github.com/TerenzTuason/codebreak-hackathon.git",
+    "commit": "d5cf3cf033ebdd084a38ffdf3194d6de2eef6c6c"
+  },
+  "root": "C:\\Users\\terenz\\Projects\\Others\\CodeBreak\\ai-training",
+  "host": "terenz",
+  "executable": "C:\\Users\\terenz\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+  "codePathLocal": "run_training.py",
+  "cpu_count": 8,
+  "cpu_count_logical": 16,
+  "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+  "gpu_count": 1,
+  "disk": {
+    "/": {
+      "total": "487305056256",
+      "used": "375137124352"
+    }
+  },
+  "memory": {
+    "total": "25147723776"
+  },
+  "cpu": {
+    "count": 8,
+    "countLogical": 16
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA GeForce RTX 3050 Laptop GPU",
+      "memoryTotal": "4294967296",
+      "cudaCores": 2048,
+      "architecture": "Ampere"
+    }
+  ],
+  "cudaVersion": "12.7"
+}

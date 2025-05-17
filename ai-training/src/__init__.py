@@ -1,0 +1,3 @@
+"""
+Healthcare Support System package.
+""" 

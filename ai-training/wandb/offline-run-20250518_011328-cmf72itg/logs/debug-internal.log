@@ -1,0 +1,43 @@
+{"time":"2025-05-18T01:13:29.1236635+08:00","level":"INFO","msg":"stream: starting","core version":"0.19.11","symlink path":"C:\\Users\\terenz\\Projects\\Others\\CodeBreak\\ai-training\\wandb\\offline-run-20250518_011328-cmf72itg\\logs\\debug-core.log"}
+{"time":"2025-05-18T01:13:29.2521567+08:00","level":"WARN","msg":"GraphQL client is nil, skipping feature loading"}
+{"time":"2025-05-18T01:13:29.254208+08:00","level":"INFO","msg":"created new stream","id":"cmf72itg"}
+{"time":"2025-05-18T01:13:29.2547221+08:00","level":"INFO","msg":"stream: started","id":"cmf72itg"}
+{"time":"2025-05-18T01:13:29.255231+08:00","level":"INFO","msg":"writer: Do: started","stream_id":"cmf72itg"}
+{"time":"2025-05-18T01:13:29.255231+08:00","level":"INFO","msg":"handler: started","stream_id":"cmf72itg"}
+{"time":"2025-05-18T01:13:29.255231+08:00","level":"INFO","msg":"sender: started","stream_id":"cmf72itg"}
+{"time":"2025-05-18T01:13:29.2689023+08:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-05-18T01:13:44.297235+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:13:59.344436+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:14:14.6747501+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:14:30.5439878+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:14:44.3180054+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:14:59.2892133+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:15:14.2828244+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:15:29.2923728+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:15:44.5284988+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:15:59.4674813+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:16:14.3244078+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:16:29.4178868+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:16:44.3097105+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:16:59.3034932+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:17:14.3077008+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:17:32.5683193+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:17:51.1556289+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:18:00.1815915+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:18:15.2119247+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:18:29.9326409+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:18:44.2971285+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:18:59.2951741+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:19:14.2992544+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:19:29.3248654+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:19:44.4498378+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:19:59.2810237+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:20:14.2827695+08:00","level":"ERROR","msg":"monitor: error sampling metrics: Incorrect function."}
+{"time":"2025-05-18T01:20:23.8819484+08:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-05-18T01:20:23.8829772+08:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-05-18T01:20:23.8938427+08:00","level":"INFO","msg":"handler: operation stats","stats":{}}
+{"time":"2025-05-18T01:20:23.9175226+08:00","level":"INFO","msg":"stream: closing","id":"cmf72itg"}
+{"time":"2025-05-18T01:20:23.9175226+08:00","level":"INFO","msg":"handler: closed","stream_id":"cmf72itg"}
+{"time":"2025-05-18T01:20:23.9175226+08:00","level":"INFO","msg":"writer: Close: closed","stream_id":"cmf72itg"}
+{"time":"2025-05-18T01:20:23.9180369+08:00","level":"INFO","msg":"sender: closed","stream_id":"cmf72itg"}
+{"time":"2025-05-18T01:20:23.918688+08:00","level":"INFO","msg":"stream: closed","id":"cmf72itg"}

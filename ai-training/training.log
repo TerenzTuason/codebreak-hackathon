@@ -1,0 +1,39 @@
+2025-05-18 02:32:47,451 - INFO - Use pytorch device_name: cpu
+2025-05-18 02:32:47,452 - INFO - Use pytorch device_name: cpu
+2025-05-18 02:32:47,452 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-05-18 02:32:47,452 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-05-18 02:32:50,381 - WARNING -  * Debugger is active!
+2025-05-18 02:32:50,385 - INFO -  * Debugger PIN: 894-075-455
+2025-05-18 02:32:50,572 - WARNING -  * Debugger is active!
+2025-05-18 02:32:50,577 - INFO -  * Debugger PIN: 894-075-455
+2025-05-18 02:33:15,052 - INFO - 127.0.0.1 - - [18/May/2025 02:33:15] "[35m[1mPOST /predict HTTP/1.1[0m" 500 -
+2025-05-18 02:33:18,108 - INFO - 127.0.0.1 - - [18/May/2025 02:33:18] "[35m[1mPOST /predict HTTP/1.1[0m" 500 -
+2025-05-18 02:33:21,184 - INFO - 127.0.0.1 - - [18/May/2025 02:33:21] "[35m[1mPOST /predict HTTP/1.1[0m" 500 -
+2025-05-18 02:33:24,243 - INFO - 127.0.0.1 - - [18/May/2025 02:33:24] "[35m[1mPOST /predict HTTP/1.1[0m" 500 -
+2025-05-18 02:33:27,305 - INFO - 127.0.0.1 - - [18/May/2025 02:33:27] "[35m[1mPOST /predict HTTP/1.1[0m" 500 -
+2025-05-18 02:33:30,378 - INFO - 127.0.0.1 - - [18/May/2025 02:33:30] "[35m[1mPOST /predict HTTP/1.1[0m" 500 -
+2025-05-18 02:33:31,206 - INFO - 127.0.0.1 - - [18/May/2025 02:33:31] "[35m[1mPOST /predict?"%20}/predict HTTP/1.1[0m" 500 -
+2025-05-18 02:33:33,431 - INFO - 127.0.0.1 - - [18/May/2025 02:33:33] "[35m[1mPOST /predict HTTP/1.1[0m" 500 -
+2025-05-18 02:34:00,282 - INFO - Use pytorch device_name: cpu
+2025-05-18 02:34:00,282 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-05-18 02:34:17,211 - INFO - Converting 72 examples to embeddings...
+2025-05-18 02:34:18,113 - INFO - 
+Classification Report:
+                        precision    recall  f1-score   support
+
+   department_services       1.00      1.00      1.00         2
+   doctor_availability       1.00      1.00      1.00         1
+    insurance_coverage       1.00      1.00      1.00         2
+appointment_management       1.00      1.00      1.00         2
+           lab_results       1.00      1.00      1.00         2
+        policy_inquiry       1.00      1.00      1.00         2
+     medication_refill       1.00      1.00      1.00         2
+      test_preparation       1.00      1.00      1.00         2
+
+              accuracy                           1.00        15
+             macro avg       1.00      1.00      1.00        15
+          weighted avg       1.00      1.00      1.00        15
+
+2025-05-18 02:34:27,455 - INFO - 127.0.0.1 - - [18/May/2025 02:34:27] "[35m[1mPOST /predict?"%20}/predict HTTP/1.1[0m" 500 -
+2025-05-18 02:35:08,652 - INFO -  * Detected change in 'C:\\Users\\terenz\\Projects\\Others\\CodeBreak\\ai-training\\train.py', reloading
+2025-05-18 02:35:08,853 - INFO -  * Detected change in 'C:\\Users\\terenz\\Projects\\Others\\CodeBreak\\ai-training\\train.py', reloading
