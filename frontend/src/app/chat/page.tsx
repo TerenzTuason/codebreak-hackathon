@@ -1,10 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Send, ArrowLeft, LogOut } from 'lucide-react';
+import { Send } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import Navbar from "@/components/Navbar";
 
 interface QuickAction {
   text: string;
@@ -12,7 +11,6 @@ interface QuickAction {
 }
 
 export default function ChatPage() {
-  const router = useRouter();
   const [messages, setMessages] = useState<Array<{ text: string; isUser: boolean }>>([
     { text: "Hi 👋 How can I help you?", isUser: false }
   ]);
@@ -47,48 +45,7 @@ export default function ChatPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-500 p-4 text-white">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <div className="w-12 h-12 rounded-full overflow-hidden bg-white ring-2 ring-white/20">
-                <Image
-                  src="/images/chatavatar.png"
-                  alt="Assistant"
-                  width={48}
-                  height={48}
-                  className="object-contain"
-                />
-              </div>
-              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full ring-2 ring-white"></div>
-            </div>
-            <div>
-              <h3 className="font-semibold text-lg">SympAI</h3>
-              <p className="text-sm text-white/80">Online • Ready to help</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <Link
-              href="/dashboard"
-              className="hover:bg-white/10 rounded-full px-4 py-2 transition-all flex items-center gap-2"
-            >
-              <ArrowLeft className="h-5 w-5" />
-              <span className="text-sm font-medium">Back to Dashboard</span>
-            </Link>
-            <button
-              onClick={() => {
-                // Add your logout logic here
-                router.push('/login');
-              }}
-              className="hover:bg-white/10 rounded-full px-4 py-2 transition-all flex items-center gap-2 text-red-100 hover:text-white"
-            >
-              <LogOut className="h-5 w-5" />
-              <span className="text-sm font-medium">Logout</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      <Navbar activeTab="" onTabChange={() => {}} />
 
       {/* Chat Container */}
       <div className="flex-1 max-w-6xl w-full mx-auto p-4">

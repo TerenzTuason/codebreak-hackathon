@@ -24,6 +24,13 @@ export default function Navbar({ activeTab, onTabChange }: NavbarProps) {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  const handleNavClick = (label: string) => {
+    onTabChange(label.toLowerCase());
+    if (label.toLowerCase() === 'home') {
+      window.location.href = '/dashboard';
+    }
+  };
+
   return (
     <nav className="bg-blue-600 shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -39,7 +46,7 @@ export default function Navbar({ activeTab, onTabChange }: NavbarProps) {
               {navItems.map((item) => (
                 <button
                   key={item.label}
-                  onClick={() => onTabChange(item.label.toLowerCase())}
+                  onClick={() => handleNavClick(item.label)}
                   className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${
                     activeTab === item.label.toLowerCase()
                       ? 'text-white border-b-2 border-white'
@@ -98,7 +105,7 @@ export default function Navbar({ activeTab, onTabChange }: NavbarProps) {
                 <button
                   key={item.label}
                   onClick={() => {
-                    onTabChange(item.label.toLowerCase());
+                    handleNavClick(item.label);
                     setIsMobileMenuOpen(false);
                   }}
                   className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
