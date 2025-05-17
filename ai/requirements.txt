@@ -1,5 +1,0 @@
-flask
-crewai
-google-generativeai 
-langchain
-dotenv

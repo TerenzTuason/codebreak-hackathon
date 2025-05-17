@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Send, X, Maximize2, Mic, Camera, Image as ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -78,48 +78,64 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
     scrollToBottom();
   }, [messages]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!inputValue.trim()) return;
     
-    setMessages(prev => [...prev, { text: inputValue, isUser: true }]);
+    // Add user message
+    setMessages((prev: Message[]) => [...prev, { text: inputValue, isUser: true }]);
     setInputValue('');
     
     setIsLoading(true);
     
-    // Customize response based on context
-    setTimeout(() => {
-      let newMessage: Message;
-      
-      if (pathname === '/health-records') {
-        newMessage = {
-          text: "I'll help you understand your health information better. What specific details would you like me to explain?",
-          isUser: false,
-          metadata: {
-            suggestions: [
-              "Compare with previous records",
-              "Explain medical terms",
-              "Show related health tips",
-              "Check for interactions between medications"
-            ]
-          }
-        };
-      } else {
-        newMessage = {
-          text: "I understand you're not feeling well. Let me help you better understand your symptoms.",
-          isUser: false,
-          metadata: {
-            suggestions: [
-              "Tell me more about when it started",
-              "Rate your pain from 1-10",
-              "Any other symptoms?"
-            ]
-          }
-        };
+    try {
+      // Call the AI prediction endpoint
+      const response = await fetch('http://127.0.0.1:5000/predict', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: inputValue
+        })
+      });
+
+      const data = await response.json();
+
+      // Create AI response message
+      let newMessage: Message = {
+        text: data.tier === 0 ? data.message : data.suggested_response,
+        isUser: false,
+        metadata: {
+          suggestions: []
+        }
+      };
+
+      // Add suggestions based on confidence level
+      if (data.tier === 1) {
+        newMessage.metadata!.suggestions = [
+          "Could you provide more details?",
+          "Let me connect you with a human agent",
+          "Would you like to rephrase your question?"
+        ];
       }
-      
-      setMessages(prev => [...prev, newMessage]);
+
+      setMessages((prev: Message[]) => [...prev, newMessage]);
+    } catch (error) {
+      // Handle error case
+      setMessages((prev: Message[]) => [...prev, {
+        text: "I apologize, but I'm having trouble connecting to the server. Please try again later.",
+        isUser: false,
+        metadata: {
+          suggestions: [
+            "Try again",
+            "Contact support",
+            "Check system status"
+          ]
+        }
+      }]);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const handleVoiceInput = () => {
