@@ -9,6 +9,8 @@ import { IoMdHeartEmpty } from "react-icons/io";
 import { RiStethoscopeLine, RiHospitalLine, RiPulseLine } from "react-icons/ri";
 import { IconType } from 'react-icons';
 import { useLoading } from "@/context/LoadingContext";
+import usersData from '@/data/users.json';
+import toast, { Toaster } from 'react-hot-toast';
 
 interface BackgroundIconProps {
   icon: IconType;
@@ -39,7 +41,7 @@ const BackgroundIcon = ({ icon: Icon, x, y }: BackgroundIconProps) => (
 );
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
   const { setIsLoading } = useLoading();
@@ -51,12 +53,35 @@ export default function LoginPage() {
     setIsLoading(true);
     
     try {
-      // TODO: Add actual authentication logic here
-      console.log("Login attempt with:", { email, password });
-      
-      // For demo purposes, always navigate to dashboard
-      // In production, this should only happen after successful authentication
-      await router.push("/dashboard");
+      // Find user with matching username and password
+      const user = usersData.users.find(
+        (u) => u.username === username && u.password === password
+      );
+
+      if (user) {
+        // Store user info in localStorage (you might want to use a more secure method in production)
+        localStorage.setItem('user', JSON.stringify({
+          id: user.id,
+          username: user.username,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          location: user.location
+        }));
+        
+        await router.push("/dashboard");
+      } else {
+        toast.error("Invalid username or password", {
+          style: {
+            background: '#FF5B5B',
+            color: '#fff',
+          },
+          iconTheme: {
+            primary: '#fff',
+            secondary: '#FF5B5B',
+          },
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -80,6 +105,8 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-100 via-white to-sky-50 p-4 relative overflow-hidden">
+      <Toaster position="top-center" reverseOrder={false} />
+      
       {/* Background Pattern */}
       <div className="fixed inset-0 pointer-events-none">
         {backgroundIcons.map((item) => (
@@ -145,9 +172,9 @@ export default function LoginPage() {
                 <div>
                   <div className="relative">
                     <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      type="text"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
                       className="w-full bg-white/10 rounded-lg px-4 py-3 pl-10 text-white border border-white/20 placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all duration-200"
                       placeholder="Enter Username"
                       required

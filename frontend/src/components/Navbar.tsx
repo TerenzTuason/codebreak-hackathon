@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { User, LogOut, Menu, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface NavItem {
   label: string;
@@ -12,6 +13,7 @@ interface NavItem {
 interface NavbarProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
+  username?: string;
 }
 
 const navItems: NavItem[] = [
@@ -20,15 +22,21 @@ const navItems: NavItem[] = [
   { label: 'Queries', href: '/dashboard/queries' },
 ];
 
-export default function Navbar({ activeTab, onTabChange }: NavbarProps) {
+export default function Navbar({ activeTab, onTabChange, username = 'User' }: NavbarProps) {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const router = useRouter();
 
   const handleNavClick = (label: string) => {
     onTabChange(label.toLowerCase());
     if (label.toLowerCase() === 'home') {
       window.location.href = '/dashboard';
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    router.push('/login');
   };
 
   return (
@@ -59,43 +67,44 @@ export default function Navbar({ activeTab, onTabChange }: NavbarProps) {
             </div>
           </div>
           
-          <div className="flex items-center space-x-4">
-            <div className="relative">
-              <button 
-                className="flex items-center space-x-3 text-white hover:text-blue-100 transition-colors duration-200"
-                onClick={() => setIsProfileOpen(!isProfileOpen)}
-              >
-                <User className="h-6 w-6" />
-                <span className="hidden md:block text-sm">
-                  Dr. Smith
-                </span>
-              </button>
-              
-              {isProfileOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 border border-gray-100">
-                  <div className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer flex items-center">
-                    <User className="h-4 w-4 mr-2" />
-                    Profile
-                  </div>
-                  <div className="px-4 py-2 text-sm text-red-600 hover:bg-gray-100 cursor-pointer flex items-center">
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Logout
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <button
-              className="md:hidden text-white hover:text-blue-100 transition-colors duration-200"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          <div className="relative">
+            <button 
+              className="flex items-center space-x-3 text-white hover:text-blue-100 transition-colors duration-200"
+              onClick={() => setIsProfileOpen(!isProfileOpen)}
             >
-              {isMobileMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
+              <User className="h-6 w-6" />
+              <span className="hidden md:block text-sm">
+                {username}
+              </span>
             </button>
+            
+            {isProfileOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 border border-gray-100">
+                <div className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer flex items-center">
+                  <User className="h-4 w-4 mr-2" />
+                  Profile
+                </div>
+                <div 
+                  className="px-4 py-2 text-sm text-red-600 hover:bg-gray-100 cursor-pointer flex items-center"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </div>
+              </div>
+            )}
           </div>
+
+          <button
+            className="md:hidden text-white hover:text-blue-100 transition-colors duration-200"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </button>
         </div>
 
         {isMobileMenuOpen && (

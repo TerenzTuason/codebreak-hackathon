@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaUser, FaClock, FaEnvelope, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import { AiChatButton } from "@/components/AiChat";
 
@@ -10,6 +11,20 @@ interface ChatItemProps {
   query: string;
   timestamp: string;
   response: string;
+}
+
+interface UserInfo {
+  name: string;
+  email: string;
+  phone: string;
+  location: string;
+  username: string;
+}
+
+interface InfoItemProps {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
 }
 
 const ChatItem = ({ query, timestamp, response }: ChatItemProps) => (
@@ -28,27 +43,32 @@ const ChatItem = ({ query, timestamp, response }: ChatItemProps) => (
   </motion.div>
 );
 
-const InfoItem = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) => (
-  <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+const InfoItem = ({ icon, label, value }: InfoItemProps) => (
+  <div className="flex items-center space-x-3">
     {icon}
-    <div className="ml-3">
+    <div>
       <p className="text-sm text-gray-500">{label}</p>
-      <p className="text-gray-800 break-words">{value}</p>
+      <p className="text-gray-800">{value}</p>
     </div>
   </div>
 );
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState("home");
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const router = useRouter();
 
-  // Mock user data
-  const userInfo = {
-    name: "Dr. Smith",
-    email: "dr.smith@sympai.com",
-    phone: "+1 (555) 123-4567",
-    specialty: "General Practitioner",
-    location: "Medical Center, New York"
-  };
+  useEffect(() => {
+    // Check if user is logged in
+    const userDataStr = localStorage.getItem('user');
+    if (!userDataStr) {
+      router.push('/login');
+      return;
+    }
+
+    const userData = JSON.parse(userDataStr);
+    setUserInfo(userData);
+  }, [router]);
 
   // Mock recent chats
   const recentChats = [
@@ -69,9 +89,13 @@ export default function DashboardPage() {
     }
   ];
 
+  if (!userInfo) {
+    return null; // or a loading spinner
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-50">
-      <Navbar activeTab={activeTab} onTabChange={setActiveTab} />
+      <Navbar activeTab={activeTab} onTabChange={setActiveTab} username={userInfo.name} />
 
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">

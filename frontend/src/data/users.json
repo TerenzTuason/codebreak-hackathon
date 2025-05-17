@@ -1,0 +1,81 @@
+{
+    "users": [
+      {
+        "id": "1",
+        "username": "john_doe",
+        "password": "securePassword123",
+        "name": "John Doe",
+        "email": "john.doe@example.com",
+        "phone": "+12345217890",
+        "location": "New Yorkies, USA",
+        "healthRecords": {
+          "bloodType": "O+",
+          "allergies": ["Peanuts", "Penicillin"],
+          "currentMedications": ["Atorvastatin", "Metformin"],
+          "pastSurgeries": ["Appendectomy - 2015"],
+          "familyHistory": ["Diabetes", "Hypertension"]
+        },
+        "predefinedHistories": [
+          {
+            "date": "2023-04-15",
+            "visitType": "General Checkup",
+            "notes": "Patient reported mild headaches. Advised hydration and rest. Blood pressure within normal range. Suggested follow-up in 6 months."
+          },
+          {
+            "date": "2023-09-10",
+            "visitType": "Cardiology Consultation",
+            "notes": "Follow-up for cholesterol management. Prescribed Atorvastatin. EKG normal. Scheduled next checkup for cholesterol testing in 3 months."
+          },
+          {
+            "date": "2024-01-22",
+            "visitType": "Nutrition Counseling",
+            "notes": "Discussed dietary changes to manage cholesterol. Recommended Mediterranean diet and regular physical activity."
+          },
+          {
+            "date": "2024-06-18",
+            "visitType": "Diabetes Management",
+            "notes": "Blood sugar levels slightly elevated. Adjusted Metformin dosage. Suggested glucose monitoring at home."
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "username": "jane_smith",
+        "password": "strongPass456",
+        "name": "Jane Smith",
+        "email": "jane.smith@example.com",
+        "phone": "+9876543210",
+        "location": "San Francisco, USA",
+        "healthRecords": {
+          "bloodType": "A-",
+          "allergies": ["Latex"],
+          "currentMedications": ["Levothyroxine"],
+          "pastSurgeries": ["Gallbladder Removal - 2018"],
+          "familyHistory": ["Thyroid Issues", "Arthritis"]
+        },
+        "predefinedHistories": [
+          {
+            "date": "2023-02-20",
+            "visitType": "Thyroid Evaluation",
+            "notes": "Symptoms include fatigue and weight gain. Adjusted Levothyroxine dosage. Scheduled follow-up for thyroid function tests."
+          },
+          {
+            "date": "2023-11-05",
+            "visitType": "Dermatology Consultation",
+            "notes": "Treated for mild eczema. Recommended moisturizing, avoiding allergens, and using prescribed topical corticosteroids."
+          },
+          {
+            "date": "2024-03-12",
+            "visitType": "Physical Therapy",
+            "notes": "Complained of joint pain in knees. Recommended low-impact exercises and prescribed anti-inflammatory medication."
+          },
+          {
+            "date": "2024-08-25",
+            "visitType": "Annual Wellness Check",
+            "notes": "Vitals stable. Discussed stress management techniques and overall health improvement strategies."
+          }
+        ]
+      }
+    ]
+  }
+  
