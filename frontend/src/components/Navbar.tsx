@@ -18,8 +18,8 @@ interface NavbarProps {
 
 const navItems: NavItem[] = [
   { label: 'Home', href: '/dashboard' },
-  { label: 'Health Records', href: '/dashboard/health-records' },
-  { label: 'Queries', href: '/dashboard/queries' },
+  { label: 'Health Records', href: '/health-records' },
+  { label: 'Queries', href: '/queries' },
 ];
 
 export default function Navbar({ activeTab, onTabChange, username = 'User' }: NavbarProps) {
@@ -29,8 +29,9 @@ export default function Navbar({ activeTab, onTabChange, username = 'User' }: Na
 
   const handleNavClick = (label: string) => {
     onTabChange(label.toLowerCase());
-    if (label.toLowerCase() === 'home') {
-      window.location.href = '/dashboard';
+    const navItem = navItems.find(item => item.label === label);
+    if (navItem) {
+      router.push(navItem.href);
     }
   };
 

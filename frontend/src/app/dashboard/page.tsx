@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaUser, FaClock, FaEnvelope, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import Navbar from "@/components/Navbar";
 import { AiChatButton } from "@/components/AiChat";
 
 interface ChatItemProps {
@@ -54,7 +53,6 @@ const InfoItem = ({ icon, label, value }: InfoItemProps) => (
 );
 
 export default function DashboardPage() {
-  const [activeTab, setActiveTab] = useState("home");
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const router = useRouter();
 
@@ -95,8 +93,6 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-50">
-      <Navbar activeTab={activeTab} onTabChange={setActiveTab} username={userInfo.name} />
-
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Personal Information */}
