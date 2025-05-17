@@ -11,9 +11,10 @@ import os
 # Load environment variables
 load_dotenv()
 
-app = Flask(__name__)
-CORS(app, resources={r"/predict": {"origins": ["*"]}})  # Allow all origins in production
-api = Api(app)
+# Initialize Flask app
+flask_app = Flask(__name__)
+CORS(flask_app, resources={r"/predict": {"origins": ["http://localhost:3000", "https://sympai-lac.vercel.app/dashboard"]}})
+api = Api(flask_app)
 
 # Initialize AI model
 ai_model = HealthcareSupportAI()
@@ -37,12 +38,8 @@ except Exception as e:
     print("Please train the model first by running train.py")
 
 # Load response templates and data
-try:
-    with open(os.path.join(os.path.dirname(__file__), 'datasets/healthcare_support_data.json'), 'r') as f:
-        healthcare_data = json.load(f)
-except Exception as e:
-    print(f"Error loading healthcare data: {e}")
-    healthcare_data = {"queries": [], "data_sources": {}}
+with open('datasets/healthcare_support_data.json', 'r') as f:
+    healthcare_data = json.load(f)
 
 # Add conversation patterns
 conversation_patterns = {
@@ -176,7 +173,6 @@ def get_gemini_response(query, context=None):
         return None
         
     try:
-        # Prepare prompt with context
         prompt = f"""You are a medical AI assistant. Please provide a helpful response to the following query.
         Keep the response concise, professional, and focused on healthcare.
         
@@ -290,12 +286,5 @@ class HealthQuery(Resource):
 
 api.add_resource(HealthQuery, '/predict')
 
-# For Vercel serverless deployment
-app = app.wsgi_app
-
-# Entry point for Vercel
-def handler(event, context):
-    return app
-
 if __name__ == '__main__':
-    app.run(debug=True, port=5000) 
+    flask_app.run(debug=True, port=5000) 

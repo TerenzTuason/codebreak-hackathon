@@ -337,7 +337,7 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyPress}
             placeholder="Type your message..."
-            className="flex-1 bg-transparent px-2 focus:outline-none text-xs sm:text-sm"
+            className="flex-1 bg-transparent px-2 focus:outline-none text-xs sm:text-sm text-black"
           />
           <motion.button
             whileTap={{ scale: 0.95 }}
