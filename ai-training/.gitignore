@@ -56,3 +56,4 @@ datasets/
 .DS_Store
 node_modules/
 .next/
+.vercel

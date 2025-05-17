@@ -1,0 +1,10 @@
+logs/
+__pycache__/
+*.log
+wandb/
+training.log
+confusion_matrix.png
+# Ignore all datasets except the main one needed for inference
+# (healthcare_support_data.json is kept)
+# Ignore all models except the main model and intent labels
+# (healthcare_support_model.pth and intent_labels.json are kept) 

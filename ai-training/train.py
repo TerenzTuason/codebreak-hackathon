@@ -30,21 +30,21 @@ class IntentClassifier(nn.Module):
         self.input_layer = nn.Sequential(
             nn.Linear(input_size, hidden_size),
             nn.ReLU(),
-            nn.BatchNorm1d(hidden_size),
+            nn.LayerNorm(hidden_size),
             nn.Dropout(dropout_rate)
         )
         
         self.hidden_layer1 = nn.Sequential(
             nn.Linear(hidden_size, hidden_size // 2),
             nn.ReLU(),
-            nn.BatchNorm1d(hidden_size // 2),
+            nn.LayerNorm(hidden_size // 2),
             nn.Dropout(dropout_rate)
         )
         
         self.hidden_layer2 = nn.Sequential(
             nn.Linear(hidden_size // 2, hidden_size // 4),
             nn.ReLU(),
-            nn.BatchNorm1d(hidden_size // 4),
+            nn.LayerNorm(hidden_size // 4),
             nn.Dropout(dropout_rate)
         )
         
@@ -141,10 +141,26 @@ class HealthcareSupportAI:
         plt.savefig(save_path)
         plt.close()
     
-    def train(self, data_path, epochs=50, batch_size=32, learning_rate=0.001):
+    def train(self, data_path, epochs=50, batch_size=8, learning_rate=0.001):
         """Train the model on the healthcare support dataset"""
         # Preprocess data
         X, y = self.preprocess_data(data_path)
+        
+        # Data augmentation: Add small random noise to embeddings
+        X_aug = []
+        y_aug = []
+        for i in range(len(X)):
+            # Original sample
+            X_aug.append(X[i])
+            y_aug.append(y[i])
+            # Augmented samples with noise
+            for _ in range(2):  # Create 2 noisy copies
+                noise = np.random.normal(0, 0.01, X[i].shape)
+                X_aug.append(X[i] + noise)
+                y_aug.append(y[i])
+        
+        X = np.array(X_aug)
+        y = np.array(y_aug)
         
         # Split into train and validation sets
         X_train, X_val, y_train, y_val = train_test_split(

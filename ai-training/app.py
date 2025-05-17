@@ -111,7 +111,47 @@ def get_response_template(intent, query):
         if q['intent'] == intent:
             template = q['response_template']
             
-            # Fill template with relevant data
+            # For Tier 2 queries, return a template with placeholders
+            if q.get('tier') == 2:
+                # Create a sample response with placeholders
+                if intent == 'insurance_claim_status':
+                    return template.format(
+                        claim_id="[CLAIM_ID]",
+                        status="[STATUS]",
+                        denial_reason="[DENIAL_REASON]"
+                    )
+                elif intent == 'specialist_referral':
+                    return template.format(
+                        specialist="[SPECIALIST_NAME]",
+                        specialist_email="[SPECIALIST_EMAIL]"
+                    )
+                elif intent == 'medication_adjustment_request':
+                    return template.format(
+                        doctor="[DOCTOR_NAME]",
+                        medication_name="[MEDICATION_NAME]",
+                        dosage="[CURRENT_DOSAGE]"
+                    )
+                elif intent == 'appointment_issue_resolution':
+                    return template.format(
+                        doctor="[DOCTOR_NAME]",
+                        date="[NEW_DATE]",
+                        time="[NEW_TIME]"
+                    )
+                elif intent == 'lab_test_explanation':
+                    return template.format(
+                        test_name="[TEST_NAME]",
+                        result="[TEST_RESULT]",
+                        interpretation="[INTERPRETATION]",
+                        condition="[CONDITION]",
+                        doctor="[DOCTOR_NAME]"
+                    )
+                elif intent == 'insurance_eligibility_verification':
+                    return template.format(
+                        service="[SERVICE_NAME]",
+                        insurance_provider="[INSURANCE_PROVIDER]"
+                    )
+            
+            # Handle other intents as before
             if intent == 'doctor_availability':
                 query_lower = query.lower()
                 for doc in healthcare_data['data_sources']['doctors']:
@@ -246,43 +286,122 @@ class HealthQuery(Resource):
             # Get intent prediction for other queries
             result = ai_model.predict(query)
             
-            # Get appropriate response
+            # Get base response template
             base_response = get_response_template(result['intent'], query)
             
-            # If confidence is too low or no appropriate response, try Gemini
-            if result['confidence'] < 0.4 or not base_response:
-                gemini_response = get_gemini_response(query)
-                if gemini_response:
-                    return {
-                        'intent': result['intent'],
-                        'confidence': 0.7,  # Set reasonable confidence for Gemini responses
-                        'tier': 0,
-                        'message': gemini_response,
-                        'automated': True
-                    }
-                else:
-                    return {
-                        'intent': result['intent'],
-                        'confidence': result['confidence'],
-                        'tier': 1,
-                        'message': 'This query requires human assistance for a more accurate response.',
-                        'suggested_response': 'I apologize, but I need more information to assist you properly. Could you please provide more details about your query?'
-                    }
+            # Check query tier and adjust intent if needed
+            query_lower = query.lower()
             
-            # Enhance the base response with Gemini
-            enhanced_response = enhance_response(base_response, query, result['intent'])
+            # Keywords that indicate specific intents
+            privacy_keywords = ["privacy", "data access", "unauthorized access", "data breach", "records accessed"]
+            legal_keywords = ["legal", "lawyer", "attorney", "lawsuit", "sue", "legal action"]
+            vip_keywords = ["priority", "immediate", "urgent consultation", "private consultation", "expedited"]
+            clinical_trial_keywords = ["trial", "clinical trial", "research study", "experimental treatment"]
+            hospice_keywords = ["hospice", "end of life", "palliative", "terminal care"]
+            medication_interaction_keywords = ["drug interaction", "medicine interaction", "medication safety", "side effect"]
             
-            # Handle Tier 0 response
-            return {
-                'intent': result['intent'],
-                'confidence': result['confidence'],
-                'tier': 0,
-                'message': enhanced_response,
-                'automated': True
-            }
+            # Adjust intent based on keywords
+            if any(keyword in query_lower for keyword in privacy_keywords):
+                result['intent'] = 'critical_data_privacy_violation'
+                result['confidence'] = 0.95
+            elif any(keyword in query_lower for keyword in legal_keywords):
+                result['intent'] = 'legal_escalation'
+                result['confidence'] = 0.95
+            elif any(keyword in query_lower for keyword in vip_keywords):
+                result['intent'] = 'VIP_patient_request'
+                result['confidence'] = 0.95
+            elif any(keyword in query_lower for keyword in clinical_trial_keywords):
+                result['intent'] = 'clinical_trial_eligibility'
+                result['confidence'] = 0.95
+            elif any(keyword in query_lower for keyword in hospice_keywords):
+                result['intent'] = 'end_of_life_care_support'
+                result['confidence'] = 0.95
+            elif any(keyword in query_lower for keyword in medication_interaction_keywords):
+                result['intent'] = 'complex_medication_interaction'
+                result['confidence'] = 0.95
             
+            # Get the tier for the intent
+            intent_tier = 0
+            for q in healthcare_data['queries']:
+                if q['intent'] == result['intent']:
+                    intent_tier = q.get('tier', 0)
+                    
+                    if intent_tier == 4:
+                        # Tier 4 - Critical/Legal/VIP cases
+                        escalation_type = 'legal' if 'legal' in result['intent'] else 'VIP_support'
+                        if 'end_of_life' in result['intent']:
+                            escalation_type = 'VIP_support'  # Use VIP support for end-of-life care
+                            
+                        return {
+                            'intent': result['intent'],
+                            'confidence': result['confidence'],
+                            'tier': 4,
+                            'message': "This is a critical matter requiring immediate attention from our specialized team.",
+                            'suggested_response': base_response,
+                            'required_data': q.get('required_data', []),
+                            'escalation_contact': healthcare_data['data_sources']['escalation_contacts'].get(escalation_type),
+                            'automated': False,
+                            'priority': 'URGENT'
+                        }
+                    
+                    elif intent_tier == 3:
+                        # Tier 3 - Complex medical/privacy cases
+                        escalation_type = 'compliance' if 'privacy' in result['intent'] else None
+                        return {
+                            'intent': result['intent'],
+                            'confidence': result['confidence'],
+                            'tier': 3,
+                            'message': "This requires attention from our specialized medical team. A senior healthcare professional will review your case.",
+                            'suggested_response': base_response,
+                            'required_data': q.get('required_data', []),
+                            'escalation_contact': healthcare_data['data_sources']['escalation_contacts'].get(escalation_type),
+                            'automated': False,
+                            'priority': 'HIGH'
+                        }
+                    
+                    elif intent_tier == 2:
+                        # Tier 2 - Specialist intervention
+                        return {
+                            'intent': result['intent'],
+                            'confidence': result['confidence'],
+                            'tier': 2,
+                            'message': "This query requires specialist assistance. A healthcare professional will review your request and respond shortly.",
+                            'suggested_response': base_response,
+                            'required_data': q.get('required_data', []),
+                            'automated': False
+                        }
+            
+            # Handle Tier 0/1 queries
+            if base_response:
+                # Tier 0 - AI can handle
+                enhanced_response = enhance_response(base_response, query, result['intent'])
+                return {
+                    'intent': result['intent'],
+                    'confidence': result['confidence'],
+                    'tier': 0,
+                    'message': enhanced_response,
+                    'automated': True
+                }
+            else:
+                # Tier 1 - Basic human support needed
+                suggested_response = f"I understand you have a question about {result['intent'].replace('_', ' ')}. " \
+                                  f"To assist you better, I'll need more information. Could you please provide:\n" \
+                                  f"1. Your specific concern or request\n" \
+                                  f"2. Any relevant dates or times\n" \
+                                  f"3. Any previous interactions related to this matter"
+                
+                return {
+                    'intent': result['intent'],
+                    'confidence': result['confidence'],
+                    'tier': 1,
+                    'message': "I apologize, but I'll need to transfer you to a human agent for better assistance with your query.",
+                    'suggested_response': suggested_response,
+                    'automated': False
+                }
+                
         except Exception as e:
-            return {'error': str(e)}, 500
+            print(f"Error processing query: {e}")
+            return {'error': 'Internal server error'}, 500
 
 api.add_resource(HealthQuery, '/predict')
 
