@@ -1,0 +1,246 @@
+{
+  "hospital_name": "CityCare Hospital",
+  "data_sources": {
+    "departments": [
+      { "name": "Cardiology", "services": ["Heart Checkups", "ECG", "Stress Test"] },
+      { "name": "Orthopedics", "services": ["Fracture Treatment", "Joint Replacement", "Physiotherapy"] },
+      { "name": "Pediatrics", "services": ["Child Vaccination", "Growth Monitoring", "Flu Treatment"] },
+      { "name": "Radiology", "services": ["X-Ray", "MRI", "Ultrasound"] },
+      { "name": "Neurology", "services": ["EEG", "Migraine Treatment", "Neurological Consultations"] }
+    ],
+    "doctors": [
+      { "name": "Dr. John Miller", "department": "Cardiology", "availability": ["Monday", "Wednesday", "Friday"], "time": "9 AM - 4 PM", "room": "201A" },
+      { "name": "Dr. Emily Taylor", "department": "Pediatrics", "availability": ["Tuesday", "Thursday"], "time": "10 AM - 5 PM", "room": "105C" },
+      { "name": "Dr. Sarah Lee", "department": "Orthopedics", "availability": ["Monday", "Wednesday"], "time": "8 AM - 3 PM", "room": "302B" },
+      { "name": "Dr. Mark Spencer", "department": "Neurology", "availability": ["Tuesday", "Friday"], "time": "1 PM - 6 PM", "room": "401D" }
+    ],
+    "insurance_partners": [
+      { "name": "HealthFirst", "services_covered": ["General Checkup", "Vaccination", "Lab Tests"], "contact": "1-800-555-1001" },
+      { "name": "Medicare", "services_covered": ["Surgery", "Hospital Stays", "Specialist Consultations"], "contact": "1-800-555-2002" },
+      { "name": "BlueCross", "services_covered": ["Emergency Care", "Maternity Services"], "contact": "1-800-555-3003" },
+      { "name": "CarePlus", "services_covered": ["Dental Care", "Outpatient Consultations"], "contact": "1-800-555-4004" }
+    ],
+    "appointments": [
+      { "appointment_id": "A101", "patient_name": "John Doe", "doctor": "Dr. John Miller", "date": "2025-05-20", "status": "Scheduled", "reason": "Routine heart checkup" },
+      { "appointment_id": "A102", "patient_name": "Jane Smith", "doctor": "Dr. Emily Taylor", "date": "2025-05-18", "status": "Missed", "reason": "Child flu symptoms consultation" },
+      { "appointment_id": "A103", "patient_name": "Alex Johnson", "doctor": "Dr. Sarah Lee", "date": "2025-05-22", "status": "Scheduled", "reason": "Post-surgery physiotherapy session" }
+    ],
+    "lab_results": [
+      { "patient_name": "John Doe", "test_name": "Cholesterol", "result": "LDL 160 mg/dL", "range": "Normal < 130 mg/dL", "date": "2025-05-15", "doctor": "Dr. John Miller" },
+      { "patient_name": "Jane Smith", "test_name": "Glucose", "result": "Fasting Glucose 110 mg/dL", "range": "Normal < 100 mg/dL", "date": "2025-05-14", "doctor": "Dr. Emily Taylor" },
+      { "patient_name": "Alex Johnson", "test_name": "X-Ray", "result": "No fractures detected", "date": "2025-05-16", "doctor": "Dr. Sarah Lee" }
+    ],
+    "policies": {
+      "cancellation_policy": "Appointments can be canceled up to 24 hours before the scheduled time. Contact us at 555-1234 for urgent cancellations.",
+      "billing_policy": "Co-pays apply for insured patients based on their insurance plans. Additional charges apply for non-covered services.",
+      "data_privacy_policy": "Your medical data is securely stored and shared only with your consent. Contact 555-5678 for privacy concerns."
+    },
+    "escalation_contacts": {
+      "compliance": { "name": "Anna Collins", "email": "compliance@citycarehospital.com", "phone": "555-7654" },
+      "legal": { "name": "Mark Rogers", "email": "legal@citycarehospital.com", "phone": "555-8765" },
+      "VIP_support": { "name": "Julia Peterson", "email": "vip@citycarehospital.com", "phone": "555-1234" }
+    },
+    "strategic_support": {
+      "clinical_trial_eligibility": [
+        { "trial_name": "CardioProtect", "conditions": ["Hypertension"], "contact": "trial@citycarehospital.com" },
+        { "trial_name": "NeuroAdvance", "conditions": ["Migraine"], "contact": "neuro@citycarehospital.com" }
+      ]
+    }
+  },
+  "queries": [
+    {
+      "intent": "department_services",
+      "examples": ["What services does cardiology offer?", "Do you have radiology facilities?", "What treatments are available in neurology?"],
+      "response_template": "The {department} department offers the following services: {services}. The department is located on the 2nd floor. Would you like to book an appointment?"
+    },
+    {
+      "intent": "doctor_availability",
+      "examples": ["When is Dr. Miller available?", "What days can I see Dr. Spencer?", "Does Dr. Lee work on Wednesdays?"],
+      "response_template": "{doctor} is available on {availability} from {time} in room {room}. Would you like me to book an appointment?"
+    },
+    {
+      "intent": "insurance_coverage",
+      "examples": ["Does HealthFirst cover vaccinations?", "Will Medicare cover my surgery?", "Is CarePlus accepted for outpatient consultations?"],
+      "response_template": "Yes, {insurance_provider} covers {services_covered}. You can contact them at {contact} for further details."
+    },
+    {
+      "intent": "appointment_management",
+      "examples": ["Can I cancel my appointment?", "How do I reschedule my missed appointment?", "What time is my appointment?"],
+      "response_template": "Your appointment with {doctor} is scheduled for {date}. The reason for the appointment is: {reason}. Would you like to cancel or reschedule?"
+    },
+    {
+      "intent": "lab_results",
+      "examples": ["What are my latest test results?", "Can I get my cholesterol test result?", "When were my glucose levels last checked?"],
+      "response_template": "Your {test_name} result is {result} (normal range: {range}), recorded on {date}. This was reviewed by {doctor}. Would you like to discuss this further?"
+    },
+    {
+      "intent": "policy_inquiry",
+      "examples": ["What's your cancellation policy?", "Can you explain your billing policy?", "What are the rules for rescheduling appointments?"],
+      "response_template": "{policy_description}"
+    },
+    {
+      "intent": "medication_refill",
+      "examples": ["How can I refill my prescription?", "Can I get a refill for my cholesterol medication?", "Do I need a doctor's approval for a refill?"],
+      "response_template": "You can refill your prescription for {medication} by contacting our pharmacy at 555-6789. If your prescription has expired, please schedule a consultation with your doctor."
+    },
+    {
+      "intent": "test_preparation",
+      "examples": ["Do I need to fast for my cholesterol test?", "What should I do before my X-ray?", "How do I prepare for my MRI?"],
+      "response_template": "For {test_name}, please follow these steps: {preparation_steps}. If you have questions, call our lab at 555-7890."
+    },
+    {
+      "intent": "insurance_claim_status",
+      "examples": ["Why was my insurance claim denied?", "Can you check the status of my claim?", "Why is my claim taking so long?"],
+      "response_template": "Your insurance claim with ID {claim_id} was {status}. Reason: {denial_reason}. Would you like assistance in resubmitting the claim?",
+      "required_data": ["claim_id", "status", "denial_reason"],
+      "tier": 2
+    },
+    {
+      "intent": "specialist_referral",
+      "examples": ["Can I get a referral to a neurologist?", "I need a cardiology specialist. Can you help?", "How do I request a referral?"],
+      "response_template": "You are eligible for a referral to {specialist}. The referral has been sent to {specialist_email}. Would you like to schedule an appointment?",
+      "required_data": ["specialist", "specialist_email"],
+      "tier": 2
+    },
+    {
+      "intent": "medication_adjustment_request",
+      "examples": ["My current medication isn't working. Can it be adjusted?", "Can I switch to a generic brand?", "This dosage seems too strong. What should I do?"],
+      "response_template": "Your request for medication adjustment has been forwarded to {doctor}. You will be contacted for further review within 24 hours.",
+      "required_data": ["doctor", "medication_name", "dosage"],
+      "tier": 2
+    },
+    {
+      "intent": "appointment_issue_resolution",
+      "examples": ["I missed my appointment. Can it be rescheduled?", "I was double-booked with another patient. Can you fix it?", "The appointment system isn't showing my booking."],
+      "response_template": "The issue with your appointment has been resolved. Your new appointment is scheduled with {doctor} on {date} at {time}. A confirmation has been sent to your email.",
+      "required_data": ["doctor", "date", "time"],
+      "tier": 2
+    },
+    {
+      "intent": "lab_test_explanation",
+      "examples": ["What does my cholesterol result mean?", "My glucose levels seem high. Can you explain?", "Is my X-ray normal?"],
+      "response_template": "Your {test_name} result is {result}, which is {interpretation}. This indicates {condition}. Please follow up with {doctor} for further guidance.",
+      "required_data": ["test_name", "result", "interpretation", "condition", "doctor"],
+      "tier": 2
+    },
+    {
+      "intent": "insurance_eligibility_verification",
+      "examples": ["Am I eligible for surgery under Medicare?", "Can my insurance cover this lab test?", "Does my policy include specialist consultations?"],
+      "response_template": "Yes, your insurance plan covers {service}. A confirmation has been sent to your email. If you'd like, I can assist with booking the service.",
+      "required_data": ["service", "insurance_provider"],
+      "tier": 2
+    },
+    {
+      "intent": "rare_disease_consultation",
+      "examples": [
+        "I need help with a rare disease diagnosis",
+        "Can you find a specialist for this uncommon condition?",
+        "Where can I get more information on this rare disease?",
+        "I have symptoms of a rare condition",
+        "Looking for rare disease expert",
+        "Need consultation for unusual symptoms"
+      ],
+      "response_template": "For your condition, I recommend consulting Dr. {specialist}, an expert in rare diseases. You can reach them at {contact_email}. Would you like me to assist in scheduling an appointment?",
+      "required_data": ["specialist", "contact_email"],
+      "tier": 3
+    },
+    {
+      "intent": "critical_data_privacy_violation",
+      "examples": [
+        "I think my medical data was accessed without permission",
+        "How can I report a privacy breach?",
+        "Who investigates data security issues?",
+        "Someone accessed my records without consent",
+        "Need to report unauthorized data access",
+        "Privacy violation with my medical records"
+      ],
+      "response_template": "We take data privacy very seriously. Your report has been forwarded to {compliance_officer}, who will contact you shortly. If urgent, please call {compliance_phone}.",
+      "required_data": ["compliance_officer", "compliance_phone"],
+      "tier": 3
+    },
+    {
+      "intent": "clinical_trial_eligibility",
+      "examples": [
+        "Am I eligible for a clinical trial?",
+        "Are there trials available for migraines?",
+        "Can you find trials for hypertension patients?",
+        "Looking for experimental treatment options",
+        "Want to join a medical research study",
+        "Clinical trials for my condition"
+      ],
+      "response_template": "You may qualify for the {trial_name} clinical trial focused on {condition}. Please contact the trial coordinator at {contact_email} for more details. Would you like assistance with enrollment?",
+      "required_data": ["trial_name", "condition", "contact_email"],
+      "tier": 3
+    },
+    {
+      "intent": "legal_escalation",
+      "examples": [
+        "I need legal advice for a medical billing issue",
+        "How do I file a complaint against my insurance?",
+        "Need legal help with insurance denial",
+        "Want to take legal action about medical bill",
+        "Legal assistance for healthcare dispute",
+        "Insurance claim legal support needed"
+      ],
+      "response_template": "Your case has been escalated to {legal_contact}, our legal advisor. You can email them at {legal_email} or call {legal_phone} for immediate assistance.",
+      "required_data": ["legal_contact", "legal_email", "legal_phone"],
+      "tier": 4
+    },
+    {
+      "intent": "VIP_patient_request",
+      "examples": [
+        "Can you arrange priority treatment for me?",
+        "I need a second opinion from a top surgeon",
+        "I require a private consultation immediately",
+        "Need expedited specialist appointment",
+        "Request for priority medical care",
+        "Immediate private medical consultation"
+      ],
+      "response_template": "Your request has been forwarded to our VIP support team, led by {VIP_support_contact}. They will contact you at {VIP_support_phone}. Would you like me to prioritize this immediately?",
+      "required_data": ["VIP_support_contact", "VIP_support_phone"],
+      "tier": 4
+    },
+    {
+      "intent": "end_of_life_care_support",
+      "examples": [
+        "How do I arrange hospice care for a family member?",
+        "Can you help with end-of-life care options?",
+        "Who do I contact for palliative care support?",
+        "Need to discuss hospice arrangements",
+        "Looking for end-of-life care services",
+        "Palliative care consultation needed"
+      ],
+      "response_template": "For end-of-life care, we recommend {palliative_contact} from our hospice team. Please call {palliative_phone} or email {palliative_email} for detailed assistance.",
+      "required_data": ["palliative_contact", "palliative_phone", "palliative_email"],
+      "tier": 4
+    },
+    {
+      "intent": "complex_medication_interaction",
+      "examples": [
+        "Is it safe to take ibuprofen with my current medications?",
+        "Can you check if my medications interact?",
+        "What should I do about this side effect?",
+        "Worried about drug interactions",
+        "Multiple medication safety check",
+        "Need help with medication side effects"
+      ],
+      "response_template": "Based on your records, there may be an interaction between {medication_1} and {medication_2}. I have flagged this for review by {doctor}, who will contact you within 24 hours.",
+      "required_data": ["medication_1", "medication_2", "doctor"],
+      "tier": 4
+    },
+    {
+      "intent": "strategic_insurance_dispute",
+      "examples": [
+        "My cancer treatment was denied by insurance",
+        "Can you help me appeal this claim?",
+        "Who can assist with complex insurance disputes?",
+        "Insurance denied critical treatment",
+        "Need help fighting insurance decision",
+        "Complex insurance appeal assistance"
+      ],
+      "response_template": "Your case has been escalated to {legal_contact} for review. They will reach out to discuss options for appealing the claim.",
+      "required_data": ["legal_contact"],
+      "tier": 4
+    }
+  ]
+} 

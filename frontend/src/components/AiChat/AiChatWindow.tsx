@@ -140,7 +140,7 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
     
     try {
       // Call the AI prediction endpoint
-      const response = await fetch('http://127.0.0.1:5000/predict', {
+      const response = await fetch('https://ai-training-kappa.vercel.app/predict', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
