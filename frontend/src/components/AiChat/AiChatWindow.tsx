@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, X, Maximize2, Mic, Camera, Image as ImageIcon } from 'lucide-react';
+import { Send, X, Maximize2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,10 +12,20 @@ interface AiChatWindowProps {
   onClose: () => void;
 }
 
-interface QuickAction {
-  text: string;
-  icon?: string;
-  type?: 'default' | 'voice' | 'image';
+interface AiResponse {
+  intent: string;
+  confidence: number;
+  tier: number;
+  message: string;
+  suggested_response?: string;
+  automated: boolean;
+  priority?: 'URGENT' | 'HIGH';
+  escalation_contact?: {
+    name: string;
+    email: string;
+    phone: string;
+  };
+  required_data?: string[];
 }
 
 interface Message {
@@ -26,6 +36,15 @@ interface Message {
     imageUrl?: string;
     audioUrl?: string;
     suggestions?: string[];
+    tier?: number;
+    priority?: 'URGENT' | 'HIGH';
+    escalation_contact?: {
+      name: string;
+      email: string;
+      phone: string;
+    };
+    required_data?: string[];
+    intent?: string;
   };
 }
 
@@ -64,11 +83,8 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
 
   const [messages, setMessages] = useState<Message[]>([getInitialMessage()]);
   const [inputValue, setInputValue] = useState('');
-  const [isRecording, setIsRecording] = useState(false);
-  const [showImageUpload, setShowImageUpload] = useState(false);
   const { setIsLoading } = useLoading();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -77,6 +93,41 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const getTierBasedSuggestions = (tier: number): string[] => {
+    switch(tier) {
+      case 4:
+        return [
+          "Contact emergency services",
+          "Call legal department",
+          "Request urgent callback"
+        ];
+      case 3:
+        return [
+          "Schedule specialist consultation",
+          "Submit additional information",
+          "Request priority review"
+        ];
+      case 2:
+        return [
+          "Provide more details",
+          "Schedule follow-up",
+          "Check status later"
+        ];
+      case 1:
+        return [
+          "Could you provide more details?",
+          "Let me connect you with a human agent",
+          "Would you like to rephrase your question?"
+        ];
+      default:
+        return [
+          "Ask another question",
+          "Book an appointment",
+          "Check other services"
+        ];
+    }
+  };
 
   const handleSend = async () => {
     if (!inputValue.trim()) return;
@@ -99,28 +150,38 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
         })
       });
 
-      const data = await response.json();
+      const data: AiResponse = await response.json();
 
       // Create AI response message
-      let newMessage: Message = {
-        text: data.tier === 0 ? data.message : data.suggested_response,
+      let responseText = data.tier === 0 ? data.message : (data.suggested_response || data.message);
+      
+      // For higher tiers, add context about escalation
+      if (data.tier >= 2) {
+        responseText = `${responseText}\n\n${data.message}`;
+        
+        if (data.escalation_contact) {
+          responseText += `\n\nA specialist (${data.escalation_contact.name}) will contact you shortly.`;
+          if (data.priority === 'URGENT') {
+            responseText += ' This is marked as URGENT.';
+          }
+        }
+      }
+
+      const newMessage: Message = {
+        text: responseText,
         isUser: false,
         metadata: {
-          suggestions: []
+          suggestions: getTierBasedSuggestions(data.tier),
+          tier: data.tier,
+          priority: data.priority,
+          escalation_contact: data.escalation_contact,
+          required_data: data.required_data,
+          intent: data.intent
         }
       };
 
-      // Add suggestions based on confidence level
-      if (data.tier === 1) {
-        newMessage.metadata!.suggestions = [
-          "Could you provide more details?",
-          "Let me connect you with a human agent",
-          "Would you like to rephrase your question?"
-        ];
-      }
-
       setMessages((prev: Message[]) => [...prev, newMessage]);
-    } catch (error) {
+    } catch {
       // Handle error case
       setMessages((prev: Message[]) => [...prev, {
         text: "I apologize, but I'm having trouble connecting to the server. Please try again later.",
@@ -135,46 +196,6 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
       }]);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleVoiceInput = () => {
-    if (!isRecording) {
-      setIsRecording(true);
-      // Start recording logic here
-      // For demo, we'll simulate a recording
-      setTimeout(() => {
-        setIsRecording(false);
-        setMessages(prev => [...prev, {
-          text: "Voice message recorded",
-          isUser: true,
-          type: 'voice',
-          metadata: {
-            audioUrl: '/demo-audio.mp3'
-          }
-        }]);
-      }, 2000);
-    } else {
-      setIsRecording(false);
-      // Stop recording logic here
-    }
-  };
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setMessages(prev => [...prev, {
-          text: "Image uploaded",
-          isUser: true,
-          type: 'image',
-          metadata: {
-            imageUrl: reader.result as string
-          }
-        }]);
-      };
-      reader.readAsDataURL(file);
     }
   };
 
@@ -251,107 +272,84 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
               exit={{ opacity: 0, y: -20 }}
               className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
             >
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                className={`max-w-[85%] rounded-[14px] sm:rounded-[16px] p-2.5 sm:p-3 shadow-sm ${
-                  message.isUser
-                    ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-800'
-                }`}
-              >
-                {message.type === 'image' && message.metadata?.imageUrl && (
-                  <div className="mb-2">
-                    <Image
-                      src={message.metadata.imageUrl}
-                      alt="Uploaded"
-                      width={160}
-                      height={160}
-                      className="rounded-lg"
-                    />
-                  </div>
-                )}
-                {message.type === 'voice' && message.metadata?.audioUrl && (
-                  <div className="mb-2">
-                    <audio controls src={message.metadata.audioUrl} className="w-full" />
-                  </div>
-                )}
-                <p className="text-xs sm:text-sm whitespace-pre-wrap">{message.text}</p>
-                {message.metadata?.suggestions && (
-                  <div className="mt-2 space-y-1.5">
-                    {message.metadata.suggestions.map((suggestion, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => {
-                          setInputValue(suggestion);
-                          setMessages(prev => [...prev, { text: suggestion, isUser: true }]);
-                        }}
-                        className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs sm:text-sm ${
-                          message.isUser
-                            ? 'bg-white/10 hover:bg-white/20'
-                            : 'bg-white hover:bg-gray-50'
-                        } transition-all duration-200`}
-                      >
-                        {suggestion}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </motion.div>
+              <div className={`max-w-[85%] rounded-2xl p-3 ${
+                message.isUser
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-900'
+              }`}>
+                {/* Message text with tier-based styling */}
+                <div className="space-y-2">
+                  {message.metadata?.tier !== undefined && message.metadata.tier > 1 && (
+                    <div className={`text-xs font-medium rounded-full px-2 py-0.5 inline-block mb-2 ${
+                      message.metadata.priority === 'URGENT'
+                        ? 'bg-red-100 text-red-700'
+                        : message.metadata.priority === 'HIGH'
+                        ? 'bg-orange-100 text-orange-700'
+                        : 'bg-blue-100 text-blue-700'
+                    }`}>
+                      {message.metadata.priority || `Tier ${message.metadata.tier}`}
+                    </div>
+                  )}
+                  
+                  <p className="whitespace-pre-wrap text-sm">{message.text}</p>
+
+                  {/* Escalation contact info */}
+                  {message.metadata?.escalation_contact && (
+                    <div className="mt-2 text-xs bg-white/10 rounded-lg p-2">
+                      <p className="font-medium">Contact Information:</p>
+                      <p>{message.metadata.escalation_contact.name}</p>
+                      <p>{message.metadata.escalation_contact.email}</p>
+                      <p>{message.metadata.escalation_contact.phone}</p>
+                    </div>
+                  )}
+
+                  {/* Quick suggestions */}
+                  {!message.isUser && message.metadata?.suggestions && (
+                    <div className="mt-3 space-y-2">
+                      {message.metadata.suggestions.map((suggestion, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => {
+                            setInputValue(suggestion);
+                            handleSend();
+                          }}
+                          className="block w-full text-left text-xs bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 transition-colors"
+                        >
+                          {suggestion}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
             </motion.div>
           ))}
+          <div ref={messagesEndRef} />
         </AnimatePresence>
-        <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
-      <motion.div
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="p-3 border-t border-gray-100"
-      >
-        <div className="flex items-center gap-1.5 bg-white rounded-xl p-1 shadow-sm ring-1 ring-gray-100">
+      {/* Input area */}
+      <div className="p-3 bg-gray-50 border-t">
+        <div className="flex items-center gap-2">
+          <div className="flex-1 bg-white rounded-xl border shadow-sm text-black">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyPress}
+              placeholder="Type your message..."
+              className="w-full px-3 py-2 rounded-xl focus:outline-none"
+            />
+          </div>
           <button
-            onClick={handleVoiceInput}
-            className={`p-1.5 rounded-lg transition-all ${
-              isRecording ? 'bg-red-500 text-white' : 'text-gray-500 hover:bg-gray-100'
-            }`}
-          >
-            <Mic className="h-4 w-4" />
-          </button>
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition-all"
-          >
-            <Camera className="h-4 w-4" />
-          </button>
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleImageUpload}
-            accept="image/*"
-            className="hidden"
-          />
-          <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleKeyPress}
-            placeholder="Type your message..."
-            className="flex-1 bg-transparent px-2 focus:outline-none text-xs sm:text-sm text-black"
-          />
-          <motion.button
-            whileTap={{ scale: 0.95 }}
             onClick={handleSend}
             disabled={!inputValue.trim()}
-            className="p-1.5 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            className="p-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
-            <Send className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-          </motion.button>
+            <Send className="h-5 w-5" />
+          </button>
         </div>
-        <div className="text-[8px] sm:text-[10px] text-gray-400 text-right mt-1.5">
-          Powered by SympAI
-        </div>
-      </motion.div>
+      </div>
     </div>
   );
 } 
