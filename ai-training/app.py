@@ -111,19 +111,59 @@ def get_response_template(intent, query):
         if q['intent'] == intent:
             template = q['response_template']
             
-            # For Tier 2 queries, return a template with placeholders
-            if q.get('tier') == 2:
-                # Create a sample response with placeholders
+            # Handle specialist referral with actual doctor data
+            if intent == 'specialist_referral':
+                # Extract the requested specialty from the query
+                specialties = {
+                    'neurologist': 'Neurology',
+                    'cardiologist': 'Cardiology',
+                    'pediatrician': 'Pediatrics',
+                    'orthopedist': 'Orthopedics'
+                }
+                
+                requested_specialty = None
+                query_lower = query.lower()
+                for specialty_term, department in specialties.items():
+                    if specialty_term in query_lower:
+                        requested_specialty = department
+                        break
+                
+                if not requested_specialty:
+                    # If specialty not found in query, provide department list
+                    available_departments = [dept['name'] for dept in healthcare_data['data_sources']['departments']]
+                    return f"I can help you with referrals to these specialties: {', '.join(available_departments)}. Which specialist would you like to see?"
+                
+                # Find doctors in the requested specialty
+                specialists = [
+                    doc for doc in healthcare_data['data_sources']['doctors']
+                    if doc['department'] == requested_specialty
+                ]
+                
+                if not specialists:
+                    return f"I apologize, but I couldn't find any {requested_specialty.lower()} specialists available at the moment. Would you like to check other specialties?"
+                
+                # Get the first available specialist
+                specialist = specialists[0]
+                specialist_email = f"{specialist['name'].lower().replace(' ', '.')}@citycarehospital.com"
+                
+                # Create a more informative response
+                response = template.format(
+                    specialist=specialist['name'],
+                    specialist_email=specialist_email
+                )
+                
+                # Add availability information
+                response += f"\n\nDr. {specialist['name'].split()[-1]} is available on {', '.join(specialist['availability'])} from {specialist['time']} in room {specialist['room']}."
+                
+                return response
+            
+            # For other Tier 2 queries, keep existing placeholder handling
+            elif q.get('tier') == 2:
                 if intent == 'insurance_claim_status':
                     return template.format(
                         claim_id="[CLAIM_ID]",
                         status="[STATUS]",
                         denial_reason="[DENIAL_REASON]"
-                    )
-                elif intent == 'specialist_referral':
-                    return template.format(
-                        specialist="[SPECIALIST_NAME]",
-                        specialist_email="[SPECIALIST_EMAIL]"
                     )
                 elif intent == 'medication_adjustment_request':
                     return template.format(
