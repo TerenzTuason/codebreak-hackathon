@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_restful import Api, Resource
 from flask_cors import CORS
-from train import HealthcareSupportAI
 import json
 import re
 import google.generativeai as genai
@@ -16,9 +15,6 @@ flask_app = Flask(__name__)
 CORS(flask_app, resources={r"/predict": {"origins": ["http://localhost:3000", "https://sympai-lac.vercel.app/dashboard"]}})
 api = Api(flask_app)
 
-# Initialize AI model
-ai_model = HealthcareSupportAI()
-
 # Initialize Gemini
 try:
     genai.configure(api_key=os.getenv('GOOGLE_GEMINI_API_KEY'))
@@ -29,17 +25,26 @@ except Exception as e:
     print("Falling back to base model only")
     gemini_model = None
 
-# Load trained model and data
-try:
-    ai_model.load_model('models')
-    print("Model loaded successfully!")
-except Exception as e:
-    print(f"Error loading model: {e}")
-    print("Please train the model first by running train.py")
-
 # Load response templates and data
-with open('datasets/healthcare_support_data.json', 'r') as f:
-    healthcare_data = json.load(f)
+try:
+    with open('datasets/healthcare_support_data.json', 'r') as f:
+        healthcare_data = json.load(f)
+except Exception as e:
+    print(f"Error loading healthcare data: {e}")
+    # Provide minimal fallback data
+    healthcare_data = {
+        "queries": [],
+        "data_sources": {
+            "departments": [],
+            "doctors": [],
+            "insurance_partners": [],
+            "policies": {
+                "cancellation_policy": "Please contact support for policy information.",
+                "billing_policy": "Please contact support for billing information.",
+                "data_privacy_policy": "Please contact support for privacy information."
+            }
+        }
+    }
 
 # Add conversation patterns
 conversation_patterns = {
@@ -90,10 +95,35 @@ def is_general_conversation(query):
     
     return False, None
 
-def validate_template_data(template, data):
-    """Check if all template placeholders have corresponding data"""
-    placeholders = re.findall(r'\{([^}]+)\}', template)
-    return all(key in data for key in placeholders)
+def get_intent(query):
+    """Simple rule-based intent detection for serverless deployment"""
+    query_lower = query.lower()
+    
+    # Define intent patterns
+    intent_patterns = {
+        'doctor_availability': ['available', 'schedule', 'appointment', 'when can i see', 'booking'],
+        'department_services': ['services', 'treatments', 'what does', 'offer', 'facilities'],
+        'insurance_coverage': ['insurance', 'cover', 'policy', 'covered by'],
+        'specialist_referral': ['referral', 'specialist', 'refer me to'],
+        'medication_refill': ['refill', 'prescription', 'medicine', 'medication'],
+        'test_preparation': ['prepare', 'preparation', 'ready for test', 'before test'],
+        'lab_results': ['results', 'test results', 'lab report', 'blood test'],
+        'policy_inquiry': ['policy', 'policies', 'rules', 'guidelines']
+    }
+    
+    # Check each intent pattern
+    for intent, patterns in intent_patterns.items():
+        if any(pattern in query_lower for pattern in patterns):
+            return {
+                'intent': intent,
+                'confidence': 0.8  # Simplified confidence score
+            }
+    
+    # Default intent
+    return {
+        'intent': 'general_inquiry',
+        'confidence': 0.6
+    }
 
 def get_response_template(intent, query):
     """Get the appropriate response template and fill it with data"""
@@ -204,8 +234,7 @@ def get_response_template(intent, query):
                             'time': doc['time'],
                             'room': doc['room']
                         }
-                        if validate_template_data(template, data):
-                            return template.format(**data)
+                        return template.format(**data)
                 # No matching doctor found
                 return "I couldn't find the doctor you're looking for. Here are our available doctors: " + ", ".join(doc['name'] for doc in healthcare_data['data_sources']['doctors'])
             
@@ -216,10 +245,9 @@ def get_response_template(intent, query):
                             'department': dept['name'],
                             'services': ', '.join(dept['services'])
                         }
-                        if validate_template_data(template, data):
-                            return template.format(**data)
+                        return template.format(**data)
                 # No matching department found
-                return "I couldn't find the department you're looking for. Here are our available departments: " + ", ".join(dept['name'] for dept in healthcare_data['data_sources']['departments'])
+                return "I couldn't find the department you're looking for. Here are our available departments: " + ", ".join(dept['name'] for dep in healthcare_data['data_sources']['departments'])
             
             elif intent == 'insurance_coverage':
                 for ins in healthcare_data['data_sources']['insurance_partners']:
@@ -229,8 +257,7 @@ def get_response_template(intent, query):
                             'services_covered': ', '.join(ins['services_covered']),
                             'contact': ins['contact']
                         }
-                        if validate_template_data(template, data):
-                            return template.format(**data)
+                        return template.format(**data)
                 # No matching insurance found
                 return "I couldn't find the insurance provider you mentioned. We work with: " + ", ".join(ins['name'] for ins in healthcare_data['data_sources']['insurance_partners'])
             
@@ -323,8 +350,8 @@ class HealthQuery(Resource):
                     'automated': True
                 }
                 
-            # Get intent prediction for other queries
-            result = ai_model.predict(query)
+            # Get intent prediction
+            result = get_intent(query)
             
             # Get base response template
             base_response = get_response_template(result['intent'], query)
