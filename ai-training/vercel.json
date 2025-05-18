@@ -9,7 +9,12 @@
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "api/wsgi.py"
+            "dest": "api/wsgi.py",
+            "headers": {
+                "Access-Control-Allow-Origin": "https://sympai-lac.vercel.app",
+                "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type, Authorization"
+            }
         }
     ]
 } 
