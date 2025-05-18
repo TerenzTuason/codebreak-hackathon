@@ -12,7 +12,7 @@ load_dotenv()
 
 # Initialize Flask app
 flask_app = Flask(__name__)
-CORS(flask_app, resources={r"/predict": {"origins": ["http://localhost:3000", "https://sympai-lac.vercel.app/dashboard"]}})
+CORS(flask_app, resources={r"/predict": {"origins": ["http://localhost:3000", "https://sympai-lac.vercel.app"]}})
 api = Api(flask_app)
 
 # Initialize Gemini
