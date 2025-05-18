@@ -6,26 +6,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLoading } from '@/context/LoadingContext';
-import { usePathname } from 'next/navigation';
 
 interface AiChatWindowProps {
   onClose: () => void;
-}
-
-interface AiResponse {
-  intent: string;
-  confidence: number;
-  tier: number;
-  message: string;
-  suggested_response?: string;
-  automated: boolean;
-  priority?: 'URGENT' | 'HIGH';
-  escalation_contact?: {
-    name: string;
-    email: string;
-    phone: string;
-  };
-  required_data?: string[];
 }
 
 interface Message {
@@ -35,7 +18,6 @@ interface Message {
   metadata?: {
     imageUrl?: string;
     audioUrl?: string;
-    suggestions?: string[];
     tier?: number;
     priority?: 'URGENT' | 'HIGH';
     escalation_contact?: {
@@ -49,35 +31,10 @@ interface Message {
 }
 
 export default function AiChatWindow({ onClose }: AiChatWindowProps) {
-  const pathname = usePathname();
-  
   const getInitialMessage = (): Message => {
-    if (pathname === '/health-records') {
-      return {
-        text: "Hi! I can help you understand your health records or answer any questions about your medical history. What would you like to know?",
-        isUser: false,
-        metadata: {
-          suggestions: [
-            "Explain my current medications",
-            "What do my blood test results mean?",
-            "Summarize my medical history",
-            "Any concerning patterns in my family history?"
-          ]
-        }
-      };
-    }
-    
-    // Default message for other pages
     return {
       text: "Hi 👋 How can I help you?",
-      isUser: false,
-      metadata: {
-        suggestions: [
-          "I have a headache",
-          "Check my symptoms",
-          "Medical advice needed"
-        ]
-      }
+      isUser: false
     };
   };
 
@@ -93,41 +50,6 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
-  const getTierBasedSuggestions = (tier: number): string[] => {
-    switch(tier) {
-      case 4:
-        return [
-          "Contact emergency services",
-          "Call legal department",
-          "Request urgent callback"
-        ];
-      case 3:
-        return [
-          "Schedule specialist consultation",
-          "Submit additional information",
-          "Request priority review"
-        ];
-      case 2:
-        return [
-          "Provide more details",
-          "Schedule follow-up",
-          "Check status later"
-        ];
-      case 1:
-        return [
-          "Could you provide more details?",
-          "Let me connect you with a human agent",
-          "Would you like to rephrase your question?"
-        ];
-      default:
-        return [
-          "Ask another question",
-          "Book an appointment",
-          "Check other services"
-        ];
-    }
-  };
 
   const handleSend = async () => {
     if (!inputValue.trim()) return;
@@ -150,7 +72,7 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
         })
       });
 
-      const data: AiResponse = await response.json();
+      const data = await response.json();
 
       // Create AI response message
       let responseText = data.tier === 0 ? data.message : (data.suggested_response || data.message);
@@ -171,7 +93,6 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
         text: responseText,
         isUser: false,
         metadata: {
-          suggestions: getTierBasedSuggestions(data.tier),
           tier: data.tier,
           priority: data.priority,
           escalation_contact: data.escalation_contact,
@@ -185,14 +106,7 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
       // Handle error case
       setMessages((prev: Message[]) => [...prev, {
         text: "I apologize, but I'm having trouble connecting to the server. Please try again later.",
-        isUser: false,
-        metadata: {
-          suggestions: [
-            "Try again",
-            "Contact support",
-            "Check system status"
-          ]
-        }
+        isUser: false
       }]);
     } finally {
       setIsLoading(false);
@@ -300,24 +214,6 @@ export default function AiChatWindow({ onClose }: AiChatWindowProps) {
                       <p>{message.metadata.escalation_contact.name}</p>
                       <p>{message.metadata.escalation_contact.email}</p>
                       <p>{message.metadata.escalation_contact.phone}</p>
-                    </div>
-                  )}
-
-                  {/* Quick suggestions */}
-                  {!message.isUser && message.metadata?.suggestions && (
-                    <div className="mt-3 space-y-2">
-                      {message.metadata.suggestions.map((suggestion, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => {
-                            setInputValue(suggestion);
-                            handleSend();
-                          }}
-                          className="block w-full text-left text-xs bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 transition-colors"
-                        >
-                          {suggestion}
-                        </button>
-                      ))}
                     </div>
                   )}
                 </div>

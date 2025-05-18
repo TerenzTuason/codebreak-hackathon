@@ -1,45 +1,106 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Send } from 'lucide-react';
-import Image from 'next/image';
 import Navbar from "@/components/Navbar";
 import { useLoading } from '@/context/LoadingContext';
+import { motion, AnimatePresence } from 'framer-motion';
 
-interface QuickAction {
+interface Message {
   text: string;
-  icon?: string;
+  isUser: boolean;
+  type?: 'text' | 'voice' | 'image';
+  metadata?: {
+    imageUrl?: string;
+    audioUrl?: string;
+    tier?: number;
+    priority?: 'URGENT' | 'HIGH';
+    escalation_contact?: {
+      name: string;
+      email: string;
+      phone: string;
+    };
+    required_data?: string[];
+    intent?: string;
+  };
 }
 
 export default function ChatPage() {
-  const [messages, setMessages] = useState<Array<{ text: string; isUser: boolean }>>([
+  const [messages, setMessages] = useState<Message[]>([
     { text: "Hi 👋 How can I help you?", isUser: false }
   ]);
   const [inputValue, setInputValue] = useState('');
   const { setIsLoading } = useLoading();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const quickActions: QuickAction[] = [
-    { text: "Track my order 📦" },
-    { text: "How do I track my order (FAQ)?" }
-  ];
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
-  const handleSend = () => {
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleSend = async () => {
     if (!inputValue.trim()) return;
     
+    // Add user message
     setMessages(prev => [...prev, { text: inputValue, isUser: true }]);
     setInputValue('');
     
-    // Show loading state while waiting for response
     setIsLoading(true);
     
-    // Simulate AI response
-    setTimeout(() => {
-      setMessages(prev => [...prev, { 
-        text: "Let's take care of your order 📦\nPlease choose the right topic:", 
-        isUser: false 
+    try {
+      // Call the AI prediction endpoint
+      const response = await fetch('https://ai-training-kappa.vercel.app/predict', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: inputValue
+        })
+      });
+
+      const data = await response.json();
+
+      // Create AI response message
+      let responseText = data.tier === 0 ? data.message : (data.suggested_response || data.message);
+      
+      // For higher tiers, add context about escalation
+      if (data.tier >= 2) {
+        responseText = `${responseText}\n\n${data.message}`;
+        
+        if (data.escalation_contact) {
+          responseText += `\n\nA specialist (${data.escalation_contact.name}) will contact you shortly.`;
+          if (data.priority === 'URGENT') {
+            responseText += ' This is marked as URGENT.';
+          }
+        }
+      }
+
+      const newMessage: Message = {
+        text: responseText,
+        isUser: false,
+        metadata: {
+          tier: data.tier,
+          priority: data.priority,
+          escalation_contact: data.escalation_contact,
+          required_data: data.required_data,
+          intent: data.intent
+        }
+      };
+
+      setMessages(prev => [...prev, newMessage]);
+    } catch {
+      // Handle error case
+      setMessages(prev => [...prev, {
+        text: "I apologize, but I'm having trouble connecting to the server. Please try again later.",
+        isUser: false
       }]);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -51,46 +112,58 @@ export default function ChatPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Navbar activeTab="" onTabChange={() => {}} />
+      <Navbar activeTab="chat" onTabChange={() => {}} />
 
       {/* Chat Container */}
       <div className="flex-1 max-w-6xl w-full mx-auto p-4">
         <div className="bg-white rounded-2xl shadow-lg h-[calc(100vh-12rem)] flex flex-col overflow-hidden">
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
-              >
-                <div
-                  className={`max-w-[600px] rounded-[20px] p-4 shadow-sm ${
+            <AnimatePresence>
+              {messages.map((message, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div className={`max-w-[600px] rounded-[20px] p-4 ${
                     message.isUser
                       ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
                       : 'bg-gray-100 text-gray-800'
-                  }`}
-                >
-                  <p className="text-base whitespace-pre-wrap">{message.text}</p>
-                </div>
-              </div>
-            ))}
+                  }`}>
+                    {/* Message text with tier-based styling */}
+                    <div className="space-y-2">
+                      {message.metadata?.tier !== undefined && message.metadata.tier > 1 && (
+                        <div className={`text-xs font-medium rounded-full px-2 py-0.5 inline-block mb-2 ${
+                          message.metadata.priority === 'URGENT'
+                            ? 'bg-red-100 text-red-700'
+                            : message.metadata.priority === 'HIGH'
+                            ? 'bg-orange-100 text-orange-700'
+                            : 'bg-blue-100 text-blue-700'
+                        }`}>
+                          {message.metadata.priority || `Tier ${message.metadata.tier}`}
+                        </div>
+                      )}
+                      
+                      <p className="text-base whitespace-pre-wrap">{message.text}</p>
 
-            {/* Quick Actions */}
-            {messages.length === 2 && (
-              <div className="space-y-2 mt-4 max-w-[600px]">
-                {quickActions.map((action, index) => (
-                  <button
-                    key={index}
-                    onClick={() => {
-                      setMessages(prev => [...prev, { text: action.text, isUser: true }]);
-                    }}
-                    className="w-full text-left px-5 py-3 rounded-2xl border border-blue-100 text-blue-600 hover:bg-blue-50 hover:border-blue-200 transition-all duration-200"
-                  >
-                    {action.text}
-                  </button>
-                ))}
-              </div>
-            )}
+                      {/* Escalation contact info */}
+                      {message.metadata?.escalation_contact && (
+                        <div className="mt-2 text-xs bg-white/10 rounded-lg p-2">
+                          <p className="font-medium">Contact Information:</p>
+                          <p>{message.metadata.escalation_contact.name}</p>
+                          <p>{message.metadata.escalation_contact.email}</p>
+                          <p>{message.metadata.escalation_contact.phone}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+              <div ref={messagesEndRef} />
+            </AnimatePresence>
           </div>
 
           {/* Input */}
