@@ -286,20 +286,12 @@ def get_gemini_response(query, context=None):
         return None
         
     try:
-        # Create a more detailed prompt that includes medical context
-        prompt = f"""You are a medical AI assistant trained to provide accurate, helpful healthcare information. 
-        Please provide a clear, professional response to the following medical query.
-        
-        Important guidelines:
-        - Provide accurate medical information while being empathetic
-        - If the query involves emergency symptoms, always advise seeking immediate medical attention
-        - Include relevant medical terminology when appropriate
-        - Keep responses concise but informative
-        - If specific medical data is provided in the context, incorporate it accurately
+        prompt = f"""You are a medical AI assistant. Please provide a helpful response to the following query.
+        Keep the response concise, professional, and focused on healthcare.
         
         Query: {query}
         
-        {f'Additional Context: {context}' if context else ''}
+        {f'Context: {context}' if context else ''}
         
         Response:"""
         
@@ -310,36 +302,20 @@ def get_gemini_response(query, context=None):
         return None
 
 def enhance_response(base_response, query, intent):
-    """Enhanced response generation prioritizing Gemini"""
+    """Enhance the base response with Gemini if available"""
     if not gemini_model:
         return base_response
         
     try:
-        # First, get specific data from our healthcare dataset
-        specific_data = ""
-        if intent == 'doctor_availability':
-            for doc in healthcare_data['data_sources']['doctors']:
-                if doc['name'].lower() in query.lower():
-                    specific_data = f"Doctor {doc['name']} is available on {', '.join(doc['availability'])} at {doc['time']} in room {doc['room']}."
-        elif intent == 'department_services':
-            for dept in healthcare_data['data_sources']['departments']:
-                if dept['name'].lower() in query.lower():
-                    specific_data = f"The {dept['name']} department offers: {', '.join(dept['services'])}."
-        elif intent == 'insurance_coverage':
-            for ins in healthcare_data['data_sources']['insurance_partners']:
-                if ins['name'].lower() in query.lower():
-                    specific_data = f"{ins['name']} covers: {', '.join(ins['services_covered'])}. Contact: {ins['contact']}"
-        
-        # Create context combining our specific data and base response
         context = f"""
-        Specific Healthcare Information: {specific_data if specific_data else 'No specific data available'}
+        Original Response: {base_response}
+        Intent: {intent}
         
-        Base System Response: {base_response if base_response else 'No base response available'}
-        
-        Please incorporate any specific healthcare data (if available) into your response while providing comprehensive medical information.
+        Please enhance this response while keeping the core information. 
+        Make it more natural and helpful, but keep it concise and professional.
+        If the original response contains specific data (names, times, rooms, etc.), preserve that information exactly.
         """
         
-        # Get enhanced response from Gemini
         enhanced = get_gemini_response(query, context)
         return enhanced if enhanced else base_response
     except Exception as e:
@@ -359,20 +335,18 @@ class HealthQuery(Resource):
             # Check for emergency first
             is_emergency, emergency_response = check_emergency(query)
             if is_emergency:
-                # Even for emergencies, get enhanced response while maintaining urgency
-                emergency_context = "This is a MEDICAL EMERGENCY. Response must emphasize immediate medical attention while providing crucial first-aid information if applicable."
-                enhanced_emergency = get_gemini_response(query, emergency_context) or emergency_response
                 return {
                     'intent': 'emergency',
                     'confidence': 1.0,
                     'tier': 0,
-                    'message': enhanced_emergency,
+                    'message': emergency_response,
                     'automated': True
                 }
 
             # Check for general conversation
             is_general, general_response = is_general_conversation(query)
             if is_general:
+                # Enhance general responses with Gemini
                 enhanced_response = enhance_response(general_response, query, 'general_conversation')
                 return {
                     'intent': 'general_conversation',
@@ -429,20 +403,13 @@ class HealthQuery(Resource):
                         # Tier 4 - Critical/Legal/VIP cases
                         escalation_type = 'legal' if 'legal' in result['intent'] else 'VIP_support'
                         if 'end_of_life' in result['intent']:
-                            escalation_type = 'VIP_support'
-                        
-                        # Get enhanced response even for Tier 4
-                        enhanced = enhance_response(
-                            "This is a critical matter requiring immediate attention from our specialized team.",
-                            query,
-                            result['intent']
-                        )
-                        
+                            escalation_type = 'VIP_support'  # Use VIP support for end-of-life care
+                            
                         return {
                             'intent': result['intent'],
                             'confidence': result['confidence'],
                             'tier': 4,
-                            'message': enhanced,
+                            'message': "This is a critical matter requiring immediate attention from our specialized team.",
                             'suggested_response': base_response,
                             'required_data': q.get('required_data', []),
                             'escalation_contact': healthcare_data['data_sources']['escalation_contacts'].get(escalation_type),
@@ -453,17 +420,11 @@ class HealthQuery(Resource):
                     elif intent_tier == 3:
                         # Tier 3 - Complex medical/privacy cases
                         escalation_type = 'compliance' if 'privacy' in result['intent'] else None
-                        enhanced = enhance_response(
-                            "This requires attention from our specialized medical team.",
-                            query,
-                            result['intent']
-                        )
-                        
                         return {
                             'intent': result['intent'],
                             'confidence': result['confidence'],
                             'tier': 3,
-                            'message': enhanced,
+                            'message': "This requires attention from our specialized medical team. A senior healthcare professional will review your case.",
                             'suggested_response': base_response,
                             'required_data': q.get('required_data', []),
                             'escalation_contact': healthcare_data['data_sources']['escalation_contacts'].get(escalation_type),
@@ -473,27 +434,20 @@ class HealthQuery(Resource):
                     
                     elif intent_tier == 2:
                         # Tier 2 - Specialist intervention
-                        enhanced = enhance_response(
-                            base_response,
-                            query,
-                            result['intent']
-                        )
-                        
                         return {
                             'intent': result['intent'],
                             'confidence': result['confidence'],
                             'tier': 2,
-                            'message': enhanced,
+                            'message': "This query requires specialist assistance. A healthcare professional will review your request and respond shortly.",
                             'suggested_response': base_response,
                             'required_data': q.get('required_data', []),
                             'automated': False
                         }
             
-            # Handle Tier 0/1 queries - Always get enhanced response
-            enhanced_response = enhance_response(base_response, query, result['intent'])
-            
-            if enhanced_response:
+            # Handle Tier 0/1 queries
+            if base_response:
                 # Tier 0 - AI can handle
+                enhanced_response = enhance_response(base_response, query, result['intent'])
                 return {
                     'intent': result['intent'],
                     'confidence': result['confidence'],
@@ -503,16 +457,17 @@ class HealthQuery(Resource):
                 }
             else:
                 # Tier 1 - Basic human support needed
-                suggested_response = get_gemini_response(
-                    query,
-                    "Please provide a response asking for more specific information about the medical query, maintaining a professional and helpful tone."
-                ) or f"I understand you have a question about {result['intent'].replace('_', ' ')}. Could you please provide more specific information about your concern?"
+                suggested_response = f"I understand you have a question about {result['intent'].replace('_', ' ')}. " \
+                                  f"To assist you better, I'll need more information. Could you please provide:\n" \
+                                  f"1. Your specific concern or request\n" \
+                                  f"2. Any relevant dates or times\n" \
+                                  f"3. Any previous interactions related to this matter"
                 
                 return {
                     'intent': result['intent'],
                     'confidence': result['confidence'],
                     'tier': 1,
-                    'message': "I'll need to transfer you to a human agent for better assistance with your query.",
+                    'message': "I apologize, but I'll need to transfer you to a human agent for better assistance with your query.",
                     'suggested_response': suggested_response,
                     'automated': False
                 }
